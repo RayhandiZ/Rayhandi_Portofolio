@@ -449,22 +449,10 @@ button:hover > .arrow i + i {
   inset: 0;
   border-radius: inherit;
 }
-/* Thin rainbow where light splits at the edge; it only shows fully while the lens is lifted. */
+/* Thin white rim; it only shows fully while the lens is lifted. */
 .nav-lens::before {
   padding: 1.5px;
-  background: conic-gradient(
-    #5be08f,
-    rgba(255, 255, 255, 0.25) 12%,
-    #ffa45c 19%,
-    #6ea8ff 30%,
-    rgba(255, 255, 255, 0.12) 42%,
-    #5be08f 50%,
-    rgba(255, 255, 255, 0.12) 58%,
-    #6ea8ff 70%,
-    #ff7ab8 81%,
-    rgba(255, 255, 255, 0.25) 88%,
-    #5be08f
-  );
+  background: #fff;
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);

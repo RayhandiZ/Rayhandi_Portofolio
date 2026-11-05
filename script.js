@@ -48,14 +48,14 @@ mobileNav.addEventListener("change", () => {
   placeLens();
 });
 
-/* Glass lens over the current nav item. Press and hold to lift it out of the bar and drag it along;
+/* Glass lens over the current nav item. Press and hold to lift it and drag it sideways along the bar;
    letting go drops it on the nearest item and goes there. */
 const navLinks = [...navLinksBox.querySelectorAll("a")];
 const navContact = navigation.querySelector(".nav-contact");
 const navBar = navigation.parentElement;
 const navLens = document.getElementById("navLens");
 const lens = { x: 0, y: 0, w: 0, h: 0, vx: 0, vy: 0, vw: 0, vh: 0 };
-const lensAim = { x: 0, y: 0 };
+const lensAim = { x: 0 };
 let lensPlaced = false;
 let lensHeld = false;
 let lensRunning = false;
@@ -74,8 +74,12 @@ const nearestNavLink = (x) =>
       ? link
       : best,
   );
-// Past the edge the lens keeps following, with less and less give.
-const softLimit = (distance, reach) => reach * (1 - 1 / (distance / reach + 1));
+// A held lens stops centred on the first and last items.
+const clampToNavLinks = (x) =>
+  Math.min(
+    Math.max(x, linkCentre(navLinks[0])),
+    linkCentre(navLinks[navLinks.length - 1]),
+  );
 
 // While the page travels to a chosen section, the lens waits there instead of visiting every section on the way.
 function aimNavAt(target) {
@@ -103,7 +107,7 @@ function lensGoal() {
   if (lensHeld) {
     return {
       x: lensAim.x,
-      y: lensAim.y,
+      y: 0,
       w: nearestNavLink(lensAim.x).offsetWidth + 60,
       h: navBar.offsetHeight + 20,
     };
@@ -121,10 +125,10 @@ function lensGoal() {
 }
 
 /* True refraction needs SVG filters in backdrop-filter, which only Chromium renders.
-   Elsewhere the lens keeps its clear glass, rim, and rainbow edge. */
+   Elsewhere the lens keeps its clear glass and white rim. */
 const lensFilter = document.getElementById("lensRefraction");
 const lensMapImage = document.getElementById("lensMap");
-const lensShifts = [...lensFilter.querySelectorAll("feDisplacementMap")];
+const lensShift = lensFilter.querySelector("feDisplacementMap");
 let lensRefracts = false;
 let lensFilterKey = "";
 function buildLensRefraction() {
@@ -175,9 +179,7 @@ function paintRefraction(width, height) {
     node.setAttribute("width", width);
     node.setAttribute("height", height);
   });
-  lensShifts.forEach((node, index) =>
-    node.setAttribute("scale", (bend + index * (1 + lift)).toFixed(1)),
-  );
+  lensShift.setAttribute("scale", bend.toFixed(1));
 }
 function paintLens() {
   const width = Math.round(lens.w + Math.min(Math.abs(lens.vx) * 1.5, 36));
@@ -206,6 +208,13 @@ function lensFrame(now) {
     lensPlaced = true;
   } else {
     spring("x", goal.x, lensHeld ? 0.2 : 0.13, lensHeld ? 0.7 : 0.74, step);
+    if (lensHeld) {
+      const held = clampToNavLinks(lens.x);
+      if (held !== lens.x) {
+        lens.x = held;
+        lens.vx = 0;
+      }
+    }
     spring("y", goal.y, 0.16, 0.72, step);
     spring("w", goal.w, 0.16, 0.7, step);
     spring("h", goal.h, 0.16, 0.7, step);
@@ -234,15 +243,9 @@ function placeLens() {
   lensPlaced = false;
   wakeLens();
 }
-function aimLens(clientX, clientY) {
+function aimLens(clientX) {
   const box = navLinksBox.getBoundingClientRect();
-  const over = clientX - box.left;
-  if (over < 0) lensAim.x = -softLimit(-over, 46);
-  else if (over > box.width)
-    lensAim.x = box.width + softLimit(over - box.width, 46);
-  else lensAim.x = over;
-  const rise = clientY - (box.top + box.height / 2);
-  lensAim.y = Math.sign(rise) * softLimit(Math.abs(rise), 9);
+  lensAim.x = clampToNavLinks(clientX - box.left);
   const under = nearestNavLink(lensAim.x);
   if (under !== lensUnder) {
     lensUnder?.classList.remove("is-under");
@@ -250,14 +253,14 @@ function aimLens(clientX, clientY) {
     lensUnder = under;
   }
 }
-function liftLens(clientX, clientY) {
+function liftLens(clientX) {
   clearTimeout(lensHoldTimer);
   lensHeld = true;
   navLinksBox.setPointerCapture(lensPress.id);
   navLinksBox.classList.remove("no-lens");
   navLinksBox.classList.add("is-held");
   root.classList.add("lens-held");
-  aimLens(clientX, clientY);
+  aimLens(clientX);
   wakeLens();
 }
 function dropLens(navigate) {
@@ -284,14 +287,13 @@ function dropLens(navigate) {
 navLinksBox.addEventListener("pointerdown", (event) => {
   if (event.button !== 0 || mobileNav.matches) return;
   lensPress = { id: event.pointerId, x: event.clientX };
-  const { clientX, clientY } = event;
-  lensHoldTimer = setTimeout(() => liftLens(clientX, clientY), 110);
+  const { clientX } = event;
+  lensHoldTimer = setTimeout(() => liftLens(clientX), 110);
 });
 navLinksBox.addEventListener("pointermove", (event) => {
   if (!lensPress || event.pointerId !== lensPress.id) return;
-  if (lensHeld) aimLens(event.clientX, event.clientY);
-  else if (Math.abs(event.clientX - lensPress.x) > 4)
-    liftLens(event.clientX, event.clientY);
+  if (lensHeld) aimLens(event.clientX);
+  else if (Math.abs(event.clientX - lensPress.x) > 4) liftLens(event.clientX);
 });
 navLinksBox.addEventListener("pointerup", () => dropLens(true));
 navLinksBox.addEventListener("pointercancel", () => dropLens(false));
