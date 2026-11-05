@@ -1,0 +1,726 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#051221" />
+    <meta name="color-scheme" content="dark" />
+    <meta
+      name="description"
+      content="Rayhandi Zulmi — Web Developer, UI/UX Designer & Data Analyst. Project web, dashboard, dan aplikasi yang menghubungkan data dengan pengalaman pengguna."
+    />
+    <title>Rayhandi Zulmi</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css" />
+    <script>
+      if (matchMedia("(prefers-reduced-motion: no-preference)").matches)
+        document.documentElement.classList.add("motion");
+    </script>
+    <script
+      src="script.js"
+      defer
+      onerror="document.documentElement.classList.remove('motion')"
+    ></script>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+      <symbol id="mark" viewBox="0 0 48 48">
+        <path
+          d="M24 3v42M3 24h42M9.2 9.2l29.6 29.6M38.8 9.2 9.2 38.8"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          vector-effect="non-scaling-stroke"
+        />
+      </symbol>
+      <symbol id="icon-github" viewBox="0 0 24 24">
+        <path
+          fill="currentColor"
+          d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.11.79-.25.79-.55 0-.27-.01-1.17-.02-2.12-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.75 2.69 1.25 3.34.95.1-.74.4-1.25.72-1.54-2.55-.29-5.23-1.28-5.23-5.68 0-1.26.45-2.28 1.18-3.09-.12-.29-.51-1.46.11-3.05 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 5.74 0c2.19-1.49 3.15-1.18 3.15-1.18.62 1.59.23 2.76.11 3.05.73.81 1.18 1.83 1.18 3.09 0 4.41-2.69 5.38-5.25 5.67.41.35.77 1.05.77 2.12 0 1.53-.01 2.76-.01 3.14 0 .3.2.66.8.55A11.51 11.51 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"
+        />
+      </symbol>
+      <symbol id="icon-linkedin" viewBox="0 0 24 24">
+        <path
+          fill="currentColor"
+          d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"
+        />
+      </symbol>
+      <symbol id="icon-mail" viewBox="0 0 24 24">
+        <path
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M3.5 6.5h17v11h-17zM3.5 7l8.5 6.5L20.5 7"
+        />
+      </symbol>
+      <symbol id="icon-pin" viewBox="0 0 24 24">
+        <path
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M12 21.5s7-6.1 7-11.5a7 7 0 1 0-14 0c0 5.4 7 11.5 7 11.5zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"
+        />
+      </symbol>
+      <filter
+        id="lensRefraction"
+        x="0"
+        y="0"
+        filterUnits="userSpaceOnUse"
+        primitiveUnits="userSpaceOnUse"
+        color-interpolation-filters="sRGB"
+      >
+        <feImage
+          id="lensMap"
+          x="0"
+          y="0"
+          preserveAspectRatio="none"
+          result="map"
+        />
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="map"
+          scale="7"
+          xChannelSelector="R"
+          yChannelSelector="G"
+          result="r"
+        />
+        <feColorMatrix
+          in="r"
+          values="1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0"
+          result="red"
+        />
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="map"
+          scale="8"
+          xChannelSelector="R"
+          yChannelSelector="G"
+          result="g"
+        />
+        <feColorMatrix
+          in="g"
+          values="0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0"
+          result="green"
+        />
+        <feDisplacementMap
+          in="SourceGraphic"
+          in2="map"
+          scale="9"
+          xChannelSelector="R"
+          yChannelSelector="G"
+          result="b"
+        />
+        <feColorMatrix
+          in="b"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0"
+          result="blue"
+        />
+        <feBlend in="red" in2="green" mode="screen" result="rg" />
+        <feBlend in="rg" in2="blue" mode="screen" />
+      </filter>
+    </svg>
+    <a class="skip-link" href="#main">Lewati ke konten</a>
+    <span class="scroll-progress" id="scrollProgress" aria-hidden="true"></span>
+    <header class="site-header" id="siteHeader">
+      <div class="container nav-bar">
+        <a class="wordmark" href="#beranda" aria-label="Rayhandi Zulmi, beranda"
+          >RZ</a
+        >
+        <nav id="mainNav" class="main-nav" aria-label="Navigasi utama">
+          <div class="nav-links" id="navLinks">
+            <span class="nav-lens" id="navLens" aria-hidden="true"></span
+            ><a href="#beranda" class="nav-link" draggable="false">Beranda</a
+            ><a href="#project" class="nav-link" draggable="false">Project</a
+            ><a href="#tentang" class="nav-link" draggable="false">Tentang</a
+            ><a href="#keahlian" class="nav-link" draggable="false">Keahlian</a>
+          </div>
+          <a href="#kontak" class="nav-contact">Mari berdiskusi</a>
+        </nav>
+        <button
+          class="menu-toggle"
+          id="menuToggle"
+          aria-expanded="false"
+          aria-controls="mainNav"
+          aria-label="Buka menu"
+          hidden
+        >
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </header>
+    <main id="main">
+      <section class="hero-stage" id="beranda" aria-labelledby="hero-title">
+        <canvas class="hero-canvas" id="heroCanvas" aria-hidden="true"></canvas>
+        <div class="hero container">
+          <div class="hero-copy">
+            <p class="eyebrow">Hai, saya</p>
+            <h1 id="hero-title">
+              <span class="name-line"
+                ><span class="name-first">Rayhandi</span></span
+              >
+              <span class="name-line"><em>Zulmi.</em></span>
+            </h1>
+            <p class="hero-role">
+              <span class="sr-only"
+                >Web developer, UI/UX designer, data analyst, dan dashboard
+                builder.</span
+              ><span aria-hidden="true"
+                ><span id="typedRole">Web Developer</span
+                ><span class="caret"></span
+              ></span>
+            </p>
+            <p class="hero-statement">
+              Menghubungkan <span>data, desain,</span> dan pengalaman digital.
+              Dari antarmuka web hingga dashboard real-time, saya merancang
+              solusi yang bekerja dengan baik dan terasa nyaman digunakan.
+            </p>
+            <div class="hero-actions">
+              <a class="button button-solid" href="#project"
+                >Jelajahi project <span aria-hidden="true">↓</span></a
+              ><a class="button button-outline" href="#tentang">Kenali saya</a>
+              <div class="hero-socials">
+                <a
+                  href="https://github.com/RayhandiZ"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="GitHub"
+                  ><svg aria-hidden="true"><use href="#icon-github" /></svg></a
+                ><a
+                  href="https://www.linkedin.com/in/rayhandi-zulmi-94333a360/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="LinkedIn"
+                  ><svg aria-hidden="true">
+                    <use href="#icon-linkedin" /></svg></a
+                ><a href="mailto:rayhandizulmi@gmail.com" aria-label="Email"
+                  ><svg aria-hidden="true"><use href="#icon-mail" /></svg
+                ></a>
+              </div>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <figure class="portrait">
+              <div class="portrait-rim" id="portraitRim">
+                <div class="portrait-frame">
+                  <img
+                    src="Foto%20Kece%20Di%20Pantai.jpeg"
+                    alt="Rayhandi Zulmi berdiri di tepi pantai"
+                    width="720"
+                    height="960"
+                    fetchpriority="high"
+                  />
+                </div>
+              </div>
+              <figcaption>
+                <span>The person behind the pixels</span
+                ><a
+                  class="text-link"
+                  href="https://github.com/RayhandiZ"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Explore my GitHub <span aria-hidden="true">↗</span></a
+                >
+              </figcaption>
+            </figure>
+            <div class="portrait-note">
+              <svg class="mark" data-spin="0.22" aria-hidden="true">
+                <use href="#mark" />
+              </svg>
+              <p>
+                Logika yang terstruktur.<br /><em>Sentuhan yang personal.</em>
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div class="discipline-band">
+        <div class="discipline-track" id="disciplineTrack">
+          <div class="discipline-set">
+            <span>Web development</span
+            ><svg class="mark" data-spin="0.3" aria-hidden="true">
+              <use href="#mark" /></svg
+            ><em>UI/UX design</em
+            ><svg class="mark" data-spin="0.3" aria-hidden="true">
+              <use href="#mark" /></svg
+            ><span>Data analytics</span
+            ><svg class="mark" data-spin="0.3" aria-hidden="true">
+              <use href="#mark" /></svg
+            ><em>Dashboard</em
+            ><svg class="mark" data-spin="0.3" aria-hidden="true">
+              <use href="#mark" />
+            </svg>
+          </div>
+        </div>
+      </div>
+      <section
+        class="work section container"
+        id="project"
+        aria-labelledby="work-title"
+      >
+        <div class="section-top reveal">
+          <p class="eyebrow">Selected work</p>
+          <span class="small-label">Ide menjadi sesuatu yang nyata.</span>
+        </div>
+        <div class="section-heading">
+          <h2 id="work-title">
+            Dibangun dengan logika<span class="tuck">.</span><br /><em
+              >Dirancang dengan rasa.</em
+            >
+          </h2>
+          <p class="reveal">
+            Beberapa project yang mempertemukan pengembangan, data, dan desain.
+          </p>
+        </div>
+        <div class="work-toolbar reveal">
+          <div class="filters" role="group" aria-label="Filter project">
+            <button type="button" data-filter="all" aria-pressed="true">
+              Semua <span>03</span></button
+            ><button type="button" data-filter="web" aria-pressed="false">
+              Web <span>02</span></button
+            ><button type="button" data-filter="app" aria-pressed="false">
+              Aplikasi <span>01</span>
+            </button>
+          </div>
+          <span
+            id="filterStatus"
+            class="small-label"
+            role="status"
+            aria-live="polite"
+            >3 project ditampilkan</span
+          >
+        </div>
+        <div class="project-grid">
+          <article
+            class="project-card project-featured"
+            data-category="web"
+            data-depth="0"
+          >
+            <div class="project-art art-softskill">
+              <div class="art-top">
+                <span>Universitas Multimedia Nusantara</span><span>Web</span>
+              </div>
+              <img
+                class="umn-logo"
+                src="Logo-UMN.png"
+                alt="Logo Universitas Multimedia Nusantara"
+                width="160"
+                height="160"
+                loading="lazy"
+              />
+              <div class="art-title">Beyond<br /><em>academics.</em></div>
+              <div class="art-bottom">
+                <span>UMN Softskill</span><span>Monitoring & development</span>
+              </div>
+            </div>
+            <div class="project-body">
+              <div class="project-kicker"><span>Web development</span></div>
+              <h3>Website UMN Softskill</h3>
+              <p>
+                Platform untuk mengelola dan memonitor soft skill mahasiswa di
+                Universitas Multimedia Nusantara.
+              </p>
+              <div class="tags">
+                <span>Next.js</span><span>TypeScript</span><span>React.js</span
+                ><span>Tailwind</span>
+              </div>
+              <a
+                class="project-link"
+                href="https://github.com/RayhandiZ/Website_UMN_Softskill"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Lihat source code <span aria-hidden="true">↗</span></a
+              >
+            </div>
+          </article>
+          <article class="project-card" data-category="web" data-depth="-0.05">
+            <div class="project-art art-himsi">
+              <svg class="mark art-mark" data-spin="0.12" aria-hidden="true">
+                <use href="#mark" />
+              </svg>
+              <div class="art-top">
+                <span>Student community</span><span>Web</span>
+              </div>
+              <div class="himsi-lockup">
+                <img
+                  src="Logo%20Himsi.jpg"
+                  alt="Logo HIMSI UMN"
+                  width="96"
+                  height="96"
+                  loading="lazy"
+                />
+                <div>HIMSI<span>Connect. Inform. Inspire.</span></div>
+              </div>
+              <div class="art-bottom">
+                <span>Sistem Informasi</span><span>UMN</span>
+              </div>
+            </div>
+            <div class="project-body">
+              <div class="project-kicker"><span>Web development</span></div>
+              <h3>Website HIMSI UMN</h3>
+              <p>
+                Ruang digital organisasi mahasiswa untuk berbagi informasi,
+                event, dan komunikasi.
+              </p>
+              <div class="tags">
+                <span>React.js</span><span>TypeScript</span
+                ><span>JavaScript</span>
+              </div>
+              <div class="project-links">
+                <a
+                  class="project-link"
+                  href="https://himsi.umn.ac.id"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Kunjungi website <span aria-hidden="true">↗</span></a
+                ><a
+                  class="project-link secondary-link"
+                  href="https://github.com/RayhandiZ/Website_HIMSI"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Source code <span aria-hidden="true">↗</span></a
+                >
+              </div>
+            </div>
+          </article>
+          <article class="project-card" data-category="app" data-depth="0.07">
+            <div class="project-art art-digitask">
+              <svg class="mark art-mark" data-spin="-0.12" aria-hidden="true">
+                <use href="#mark" />
+              </svg>
+              <div class="art-top">
+                <span>Made for freelancers</span><span>App</span>
+              </div>
+              <div class="digitask-lockup">
+                <img
+                  src="digitask_Logo.png"
+                  alt="Logo DigiTask"
+                  width="110"
+                  height="110"
+                  loading="lazy"
+                />
+                <div>DigiTask<span>Less friction. More focus.</span></div>
+              </div>
+              <div class="art-bottom">
+                <span>Task & project management</span><span>Mobile</span>
+              </div>
+            </div>
+            <div class="project-body">
+              <div class="project-kicker"><span>App development</span></div>
+              <h3>Aplikasi DigiTask</h3>
+              <p>
+                Aplikasi untuk membantu freelancer mengelola tugas dan proyek
+                secara efisien.
+              </p>
+              <div class="tags"><span>Dart</span><span>Flutter</span></div>
+              <a
+                class="project-link"
+                href="https://github.com/RayhandiZ/DigiTask"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Lihat source code <span aria-hidden="true">↗</span></a
+              >
+            </div>
+          </article>
+        </div>
+        <div class="work-foot reveal">
+          <span>Eksplorasi lainnya ada di GitHub.</span
+          ><a
+            class="text-link"
+            href="https://github.com/RayhandiZ"
+            target="_blank"
+            rel="noopener noreferrer"
+            >github.com/RayhandiZ <span aria-hidden="true">↗</span></a
+          >
+        </div>
+      </section>
+      <section
+        class="about-section section unfold"
+        id="tentang"
+        aria-labelledby="about-title"
+      >
+        <div class="container about-layout">
+          <div class="about-aside">
+            <p class="eyebrow">A little about me</p>
+            <div class="about-monogram" aria-hidden="true">
+              r<span>z</span
+              ><svg class="mark" data-spin="0.28" aria-hidden="true">
+                <use href="#mark" />
+              </svg>
+            </div>
+            <p class="aside-caption">
+              Rasa ingin tahu sebagai awal.<br />Detail sebagai pembeda.
+            </p>
+          </div>
+          <div class="about-copy">
+            <h2 id="about-title">
+              Di balik setiap baris kode<span class="tuck">,</span> ada
+              <em>rasa ingin tahu.</em>
+            </h2>
+            <p class="about-lead" id="aboutLead">
+              Saya Rayhandi, mahasiswa Sistem Informasi yang percaya bahwa
+              detail kecil membuat perbedaan besar.
+            </p>
+            <div class="about-body">
+              <p class="reveal">
+                Berawal dari rasa penasaran tentang cara kerja website, saya
+                kini membangun aplikasi web, antarmuka, dan dashboard real-time.
+                Saya senang mengubah ide menjadi produk nyata dengan
+                menjembatani pengolahan data, pengembangan web, dan desain
+                UI/UX.
+              </p>
+              <p class="reveal">
+                Di luar menulis kode, saya mengeksplorasi teknologi baru dan
+                mengasah kepekaan visual. Bagi saya, solusi yang baik bukan
+                hanya fungsional, tetapi juga mudah dipahami.
+              </p>
+            </div>
+            <dl class="about-facts reveal">
+              <div>
+                <dt>Berbasis di</dt>
+                <dd>Kab. Tangerang, Indonesia</dd>
+              </div>
+              <div>
+                <dt>Saat ini</dt>
+                <dd>Internship di Universitas Multimedia Nusantara</dd>
+              </div>
+            </dl>
+            <div class="stats reveal">
+              <div class="stat">
+                <strong><span data-count="15">15</span>+</strong
+                ><span>Project selesai</span>
+              </div>
+              <div class="stat">
+                <strong><span data-count="3">3</span>+</strong
+                ><span>Tahun berkarya</span>
+              </div>
+              <div class="stat">
+                <strong><span data-count="10">10</span>+</strong
+                ><span>Teknologi</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        class="skills-section section container"
+        id="keahlian"
+        aria-labelledby="skills-title"
+      >
+        <div class="section-top reveal">
+          <p class="eyebrow">Skills & toolkit</p>
+          <span class="small-label">Selalu ada hal baru untuk dipelajari.</span>
+        </div>
+        <div class="skills-layout">
+          <div class="skills-intro">
+            <h2 id="skills-title">
+              Satu ide<span class="tuck">.</span><br /><em
+                >Banyak kemungkinan.</em
+              >
+            </h2>
+            <p class="reveal">
+              Perpaduan kemampuan teknis dan kepekaan desain untuk membangun
+              pengalaman digital secara menyeluruh.
+            </p>
+            <blockquote class="reveal">
+              “Teknologi selalu berubah, yang saya jaga adalah rasa ingin tahu
+              dan kemauan untuk terus belajar.”
+            </blockquote>
+          </div>
+          <div class="skill-rows">
+            <div class="skill-row reveal">
+              <h3>Web & App Development</h3>
+              <p>Antarmuka interaktif untuk web dan mobile.</p>
+              <ul class="chips">
+                <li>HTML</li>
+                <li>CSS</li>
+                <li>JavaScript</li>
+                <li>TypeScript</li>
+                <li>React</li>
+                <li>Next.js</li>
+                <li>Tailwind</li>
+                <li>Dart</li>
+                <li>Flutter</li>
+              </ul>
+            </div>
+            <div class="skill-row reveal">
+              <h3>Data & Automation</h3>
+              <p>Dari pengolahan data ke dashboard real-time.</p>
+              <ul class="chips">
+                <li>Python</li>
+                <li>MySQL</li>
+                <li>Google Sheets</li>
+              </ul>
+            </div>
+            <div class="skill-row reveal">
+              <h3>Design & Workflow</h3>
+              <p>Detail visual dan alur kerja yang terstruktur.</p>
+              <ul class="chips">
+                <li>UI/UX Design</li>
+                <li>Figma</li>
+                <li>Git</li>
+                <li>VS Code</li>
+              </ul>
+            </div>
+            <div class="skill-levels reveal" id="skillLevels">
+              <h3>Penilaian kemampuan pribadi</h3>
+              <p>Penilaian mandiri dari portofolio awal.</p>
+              <label
+                >HTML & CSS <span>70%</span
+                ><meter min="0" max="100" value="70">70%</meter></label
+              ><label
+                >JavaScript <span>65%</span
+                ><meter min="0" max="100" value="65">65%</meter></label
+              ><label
+                >React <span>65%</span
+                ><meter min="0" max="100" value="65">65%</meter></label
+              ><label
+                >Google Sheets <span>75%</span
+                ><meter min="0" max="100" value="75">75%</meter></label
+              ><label
+                >UI/UX Design <span>70%</span
+                ><meter min="0" max="100" value="70">70%</meter></label
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+      <section
+        class="contact-section section unfold"
+        id="kontak"
+        aria-labelledby="contact-title"
+      >
+        <div class="container">
+          <div class="section-top reveal">
+            <p class="eyebrow">Let’s connect</p>
+            <span class="small-label"
+              >Punya project, ide, atau peluang kolaborasi?</span
+            >
+          </div>
+          <div class="contact-layout">
+            <div class="contact-copy">
+              <h2 id="contact-title">
+                Ide bagus dimulai dari <em>percakapan.</em>
+              </h2>
+              <p class="reveal">
+                Saya selalu terbuka untuk diskusi, kolaborasi, maupun peluang
+                baru. Saya ingin mendengar idemu.
+              </p>
+              <div class="contact-cards reveal">
+                <a class="contact-card" href="mailto:rayhandizulmi@gmail.com"
+                  ><span class="contact-icon"
+                    ><svg aria-hidden="true">
+                      <use href="#icon-mail" /></svg></span
+                  ><span
+                    ><strong>Email</strong
+                    ><span>rayhandizulmi@gmail.com</span></span
+                  ></a
+                >
+                <div class="contact-card">
+                  <span class="contact-icon"
+                    ><svg aria-hidden="true">
+                      <use href="#icon-pin" /></svg></span
+                  ><span
+                    ><strong>Lokasi</strong
+                    ><span>Kab. Tangerang, Indonesia</span></span
+                  >
+                </div>
+                <div class="contact-card">
+                  <span class="contact-icon"
+                    ><span class="status-dot" aria-hidden="true"></span></span
+                  ><span
+                    ><strong>Status</strong
+                    ><span>Tersedia untuk freelance</span></span
+                  >
+                </div>
+              </div>
+            </div>
+            <form id="contactForm" class="contact-form reveal">
+              <h3>Mari mulai sesuatu<span class="tuck">.</span></h3>
+              <div class="form-row">
+                <div class="field">
+                  <input
+                    id="fieldName"
+                    name="name"
+                    autocomplete="name"
+                    placeholder=" "
+                    required
+                    maxlength="100"
+                  /><label for="fieldName">Nama</label>
+                </div>
+                <div class="field">
+                  <input
+                    id="fieldEmail"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    placeholder=" "
+                    required
+                    maxlength="254"
+                  /><label for="fieldEmail">Email</label>
+                </div>
+              </div>
+              <div class="field">
+                <textarea
+                  id="fieldMessage"
+                  name="message"
+                  placeholder=" "
+                  rows="4"
+                  required
+                  maxlength="3000"
+                ></textarea
+                ><label for="fieldMessage">Ceritakan idemu</label>
+              </div>
+              <button
+                type="submit"
+                class="button button-solid"
+                id="contactSubmit"
+                disabled
+              >
+                Buka aplikasi email <span aria-hidden="true">↗</span>
+              </button>
+              <p class="form-hint" id="formHint">
+                Form ini menyiapkan draft di aplikasi email, bukan mengirim
+                pesan langsung.
+              </p>
+              <p id="formStatus" role="status" aria-live="polite"></p>
+              <noscript
+                ><p>
+                  Aktifkan JavaScript untuk menggunakan form, atau hubungi
+                  melalui tautan email.
+                </p></noscript
+              >
+            </form>
+          </div>
+          <div class="footer-name" aria-hidden="true">
+            Rayhandi <em>Zulmi.</em>
+          </div>
+          <footer class="footer">
+            <a class="footer-brand" href="#beranda">RZ</a>
+            <p>© <span id="year">2026</span> Rayhandi Zulmi</p>
+            <div class="footer-links">
+              <a
+                href="https://github.com/RayhandiZ"
+                target="_blank"
+                rel="noopener noreferrer"
+                >GitHub</a
+              ><a
+                href="https://www.linkedin.com/in/rayhandi-zulmi-94333a360/"
+                target="_blank"
+                rel="noopener noreferrer"
+                >LinkedIn</a
+              >
+            </div>
+          </footer>
+        </div>
+      </section>
+    </main>
+    <a class="to-top" id="toTop" href="#beranda" aria-label="Kembali ke atas"
+      ><span aria-hidden="true">↑</span></a
+    >
+  </body>
+</html>
