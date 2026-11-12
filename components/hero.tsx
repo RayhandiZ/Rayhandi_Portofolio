@@ -2,16 +2,19 @@ import Image from "next/image";
 import { GlassButton } from "@zakisheriff/liquid-glass";
 import { Arrow } from "@/components/arrow";
 import { Icon, Mark } from "@/components/icons";
+import { CONTENT } from "@/lib/content";
+import type { Lang } from "@/lib/i18n";
 import { EMAIL, GITHUB_URL, LINKEDIN_URL } from "@/lib/site";
 import portrait from "@/public/images/rayhandi-pantai.jpeg";
 
-export function Hero() {
+export function Hero({ lang }: { lang: Lang }) {
+  const t = CONTENT[lang].hero;
   return (
     <section className="hero-stage" id="beranda" aria-labelledby="hero-title">
       <canvas className="hero-canvas" id="heroCanvas" aria-hidden="true" />
       <div className="hero container">
         <div className="hero-copy">
-          <p className="eyebrow">Hai, saya</p>
+          <p className="eyebrow">{t.eyebrow}</p>
           <h1 id="hero-title">
             <span className="name-line">
               <span className="name-first">Rayhandi</span>
@@ -21,19 +24,15 @@ export function Hero() {
             </span>
           </h1>
           <p className="hero-role">
-            <span className="sr-only">
-              Web developer, UI/UX designer, data analyst, dan dashboard
-              builder.
-            </span>
+            <span className="sr-only">{t.rolesForScreenReaders}</span>
             <span aria-hidden="true">
               <span id="typedRole">Web Developer</span>
               <span className="caret" />
             </span>
           </p>
           <p className="hero-statement">
-            Menghubungkan <span>data, desain,</span> dan pengalaman digital.
-            Dari antarmuka web hingga dashboard real-time, saya merancang
-            solusi yang bekerja dengan baik dan terasa nyaman digunakan.
+            {t.statement.before} <span>{t.statement.highlight}</span>{" "}
+            {t.statement.after}
           </p>
           <div className="hero-actions">
             <GlassButton
@@ -42,7 +41,7 @@ export function Hero() {
               size="lg"
               className="button button-solid"
             >
-              Jelajahi project <Arrow glyph="↓" />
+              {t.explore} <Arrow glyph="↓" />
             </GlassButton>
             <GlassButton
               href="#tentang"
@@ -51,7 +50,7 @@ export function Hero() {
               tint="var(--sea-light)"
               className="button"
             >
-              Kenali saya
+              {t.meet}
             </GlassButton>
             <div className="hero-socials">
               <GlassButton
@@ -85,7 +84,7 @@ export function Hero() {
               <div className="portrait-frame">
                 <Image
                   src={portrait}
-                  alt="Rayhandi Zulmi berdiri di tepi pantai"
+                  alt={t.portraitAlt}
                   width={720}
                   height={960}
                   sizes="(max-width: 760px) 100vw, 48vw"
@@ -109,9 +108,9 @@ export function Hero() {
           <div className="portrait-note">
             <Mark spin={0.22} />
             <p>
-              Logika yang terstruktur.
+              {t.note.lead}
               <br />
-              <em>Sentuhan yang personal.</em>
+              <em>{t.note.em}</em>
             </p>
           </div>
         </div>
@@ -125,7 +124,7 @@ export function DisciplineBand() {
     <div className="discipline-band">
       <div className="discipline-track" id="disciplineTrack">
         <div className="discipline-set">
-          <span>Web development</span>
+          <span>Web developer</span>
           <Mark spin={0.3} />
           <em>UI/UX design</em>
           <Mark spin={0.3} />

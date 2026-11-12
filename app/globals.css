@@ -309,6 +309,11 @@ h2 em,
 .site-header.is-scrolled {
   padding-top: 10px;
 }
+/* Clear glass with no blur: what passes behind the capsule stays sharp, and only the rim bends it. */
+.nav-bar,
+.nav-bar .lg-glass {
+  --lg-glass-blur: 0px;
+}
 .nav-bar {
   --lg-glass-fill: rgba(8, 24, 41, 0.3);
   display: flex;
@@ -438,6 +443,66 @@ html:not(.nav-enhanced) .nav-track {
   background-image: var(--grad-sea);
   color: var(--ink);
   text-shadow: none;
+}
+/* Language switch at the end of the capsule: GlassSegmented with script, two plain links without. It sits
+   outside the navigation so it stays in the bar on phones, next to the menu button. */
+.lang-switch {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.lg-track.lang-track {
+  --lg-fg: var(--muted);
+  --lg-track-active: var(--white);
+  --lg-item-h: 38px;
+  --lg-item-w: 44px;
+  --lg-pad: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.lang-track .lg-track__item {
+  padding-inline: 8px;
+  transition:
+    color 0.3s,
+    height 0.6s var(--ease);
+}
+.lang-track .lg-track__item:hover,
+.lang-track .lg-track__item[aria-selected="true"] {
+  color: var(--white);
+}
+.is-scrolled .lg-track.lang-track {
+  --lg-item-h: 32px;
+}
+html:not(.nav-enhanced) .lang-track {
+  display: none;
+}
+.lang-links {
+  display: flex;
+  gap: 2px;
+}
+.nav-enhanced .lang-links {
+  display: none;
+}
+.lang-link {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.lang-link:hover,
+.lang-link[aria-current] {
+  color: var(--white);
+}
+.lang-link[aria-current] {
+  background: var(--glass-select);
 }
 .menu-toggle {
   display: none;
@@ -1994,6 +2059,11 @@ body:has(.lg-track[data-lifted]) .cursor-ring.is-on {
   .nav-enhanced .nav-track {
     display: none;
   }
+  /* The links have moved into the overlay; the switch stays in the bar beside the menu button. */
+  .nav-enhanced .lang-switch {
+    margin-left: auto;
+    margin-right: -12px;
+  }
   .nav-enhanced .nav-link {
     font-size: 22px;
     color: var(--muted);
@@ -2038,6 +2108,10 @@ body:has(.lg-track[data-lifted]) .cursor-ring.is-on {
   .is-scrolled .nav-bar {
     width: calc(100% - 64px);
     padding: 3px 4px 3px 18px;
+  }
+  .lg-track.lang-track {
+    --lg-item-h: 34px;
+    --lg-item-w: 40px;
   }
   .hero-stage {
     display: block;

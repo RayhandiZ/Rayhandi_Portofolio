@@ -1,8 +1,12 @@
 import { Arrow } from "@/components/arrow";
 import { ProjectBrowser } from "@/components/project-browser";
+import { SplitHeadingText } from "@/components/split-heading";
+import { CONTENT } from "@/lib/content";
+import type { Lang } from "@/lib/i18n";
 import { GITHUB_URL } from "@/lib/site";
 
-export function Work() {
+export function Work({ lang }: { lang: Lang }) {
+  const t = CONTENT[lang].work;
   return (
     <section
       className="work section container"
@@ -11,21 +15,17 @@ export function Work() {
     >
       <div className="section-top reveal">
         <p className="eyebrow">Selected work</p>
-        <span className="small-label">Ide menjadi sesuatu yang nyata.</span>
+        <span className="small-label">{t.tagline}</span>
       </div>
       <div className="section-heading">
         <h2 id="work-title">
-          Dibangun dengan logika<span className="tuck">.</span>
-          <br />
-          <em>Dirancang dengan rasa.</em>
+          <SplitHeadingText heading={t.title} />
         </h2>
-        <p className="reveal">
-          Beberapa project yang mempertemukan pengembangan, data, dan desain.
-        </p>
+        <p className="reveal">{t.intro}</p>
       </div>
-      <ProjectBrowser />
+      <ProjectBrowser lang={lang} />
       <div className="work-foot reveal">
-        <span>Eksplorasi lainnya ada di GitHub.</span>
+        <span>{t.more}</span>
         <a
           className="text-link"
           href={GITHUB_URL}

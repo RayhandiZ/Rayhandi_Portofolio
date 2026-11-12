@@ -26,20 +26,21 @@ Situs ini statis (halaman `/` di-prerender saat build) dan tidak memerlukan back
 
 ## Struktur
 
-- `app/layout.tsx`: kerangka HTML, metadata, font lokal (`next/font`), dan skrip kecil yang berjalan sebelum paint pertama.
-- `app/page.tsx`: urutan section halaman.
+- `app/(id)/` dan `app/(en)/`: halaman Indonesia di `/` dan halaman Inggris di `/en`, masing-masing dengan root layout sendiri (lihat Bahasa).
+- `components/root-document.tsx`: kerangka HTML bersama, metadata, font lokal (`next/font`), dan skrip kecil yang berjalan sebelum paint pertama.
+- `components/home.tsx`: urutan section halaman, dipakai kedua bahasa.
 - `app/globals.css`: seluruh styling: warna, tata letak, responsive, dan token `--lg-*` yang menyetel tampilan kaca.
-- `components/`: satu file per bagian (`hero`, `work`, `about`, `skills`, `contact`) dan per kontrol (`site-header`, `project-browser`, `contact-form`, `to-top`).
-- `lib/projects.tsx`: data project. `lib/site.ts`: email, tautan, dan daftar section navigasi.
+- `components/`: satu file per bagian (`hero`, `work`, `about`, `skills`, `contact`) dan per kontrol (`site-header`, `language-switch`, `project-browser`, `contact-form`, `to-top`).
+- `lib/content.ts`: semua teks halaman dalam dua bahasa. `lib/projects.tsx`: data project, juga dua bahasa. `lib/site.ts`: email, tautan, dan daftar section navigasi.
 - `lib/motion.ts`: seluruh motion halaman (lihat di bawah).
 - `config/liquid-glass-loader.cjs`: dua penyesuaian pada paket kaca saat build (lihat Liquid glass).
-- `public/images/`: foto dan logo asli. `app/fonts/`: font lokal beserta lisensi SIL Open Font License.
+- `public/images/`: foto dan logo asli. `app/fonts/`: font lokal beserta lisensi SIL Open Font License. Cormorant sudah dipangkas ke huruf Latin dalam format WOFF2 (21 KB, dari 95 KB); cara membuatnya ada di `app/fonts/README.md`.
 
 ### Mengubah isi
 
-- **Project:** tambahkan entri pada array `PROJECTS` di `lib/projects.tsx` (kategori, cover, judul, deskripsi, tag, tautan). Jumlah pada filter dihitung otomatis. Entri pertama selalu menjadi project utama.
-- **Teks section:** langsung di file komponennya, misalnya `components/about.tsx`.
-- **Keahlian dan persentase:** `SKILL_GROUPS` dan `SKILL_LEVELS` di `components/skills.tsx`.
+- **Teks halaman:** `lib/content.ts`, dengan blok `id` dan `en` berdampingan. TypeScript akan menandai jika satu bahasa kekurangan teks. Label yang di versi Indonesia memang sudah berbahasa Inggris ("Selected work", "Let's connect", band disiplin) ditulis langsung di komponennya dan sama di kedua bahasa.
+- **Project:** tambahkan entri pada array `PROJECTS` di `lib/projects.tsx` (kategori, cover, judul, deskripsi, tag, tautan). Judul, deskripsi, dan label tautan diisi `{ id, en }`. Jumlah pada filter dihitung otomatis. Entri pertama selalu menjadi project utama.
+- **Keahlian dan persentase:** `SKILL_GROUPS` dan `SKILL_LEVELS` di `components/skills.tsx`; ringkasan tiap kelompok ada di `lib/content.ts`.
 - **Email, GitHub, LinkedIn:** `lib/site.ts`.
 
 ## Arah desain
@@ -63,9 +64,10 @@ Kaca berasal dari paket `@zakisheriff/liquid-glass` (MIT), dipakai hanya untuk k
 | Kapsul navbar | permukaan kaca lewat `useRefraction` pada elemen sendiri |
 | Tab section di navbar | `GlassNav` |
 | Mari berdiskusi, Kenali saya, Jelajahi project, ikon sosial, tombol ke atas, tombol form | `GlassButton` |
-| Filter project | `GlassSegmented` |
+| Filter project, switch bahasa ID/EN | `GlassSegmented` |
 
 - **Bening:** token `--lg-*` di awal `app/globals.css` menyetel tint navy tipis, blur 3px, dan saturasi 1.9. Brightness diturunkan ke 0.8 supaya label navbar tetap terbaca saat judul putih lewat di belakangnya; di area gelap kacanya tetap terlihat bening.
+- **Navbar tanpa blur:** kapsul navbar dan kontrol di dalamnya memakai blur 0, jadi isi yang lewat di belakangnya tetap tajam dan hanya dibelokkan di tepinya. Label menu tetap terbaca lewat brightness 0.8 dan bayangan teks.
 - **Lensa:** tahan sebuah tab atau pilihan filter dan pilihannya terangkat menjadi lensa yang bisa digeser. Lensa hanya bergerak mendatar.
 - **Dua penyesuaian pada paket**, dibuat saat build oleh `config/liquid-glass-loader.cjs` (file di `node_modules` tetap asli): lensa tab dan filter tanpa dispersi, jadi rim-nya putih dan huruf di bawah lensa tidak berpinggiran magenta dan hijau; dan lensa yang diseret berhenti tepat di item pertama dan terakhir, tidak melentur melewatinya. Versi paket dikunci di 4.0.0. Jika versi lain dipasang dan kodenya tidak lagi cocok, build berhenti dengan pesan yang jelas. Hapus aturan `turbopack` di `next.config.ts` untuk kembali ke perilaku asli paket.
 - **Pembiasan:** di Chrome dan Edge, kaca membiaskan apa pun di belakangnya. Di Safari, lensa tab dan filter tetap membias; kapsul navbar dan tombol tampil dengan frosting dan rim. Firefox memakai jalur yang sama dengan Safari dan belum diuji oleh pembuat paketnya.
@@ -73,6 +75,16 @@ Kaca berasal dari paket `@zakisheriff/liquid-glass` (MIT), dipakai hanya untuk k
 - **Sentuhan:** paket ini menahan sentuhan yang dimulai di atas tombolnya, sehingga halaman tidak ikut scroll. `components/glass-touch-scroll.tsx` dan satu aturan `touch-action` mengembalikan scroll vertikal; tap dan geser mendatar tetap milik kontrolnya.
 - **Di section Kontak** tidak ada tab yang aktif: pill memudar dan tombol Mari berdiskusi yang menyala.
 - `prefers-reduced-transparency` mengganti semua kaca dengan warna solid.
+
+## Bahasa
+
+Halaman Indonesia ada di `/` dan halaman Inggris di `/en`. Keduanya di-prerender statis, dan `<html lang>` sesuai bahasanya.
+
+- **Switch ID/EN** ada di ujung kanan navbar; di HP letaknya di samping tombol menu. Saat diganti, halaman bahasa lain dibuka di section yang sedang dilihat (misalnya `/en#project`).
+- **Muat ulang penuh:** tiap bahasa punya root layout sendiri (`app/(id)/layout.tsx` dan `app/(en)/layout.tsx`), jadi pindah bahasa selalu memuat ulang halaman. Itu sengaja: animasi halaman bekerja dengan elemen ber-ID, dan halaman lama yang disimpan tersembunyi oleh navigasi sisi klien akan menggandakan ID-ID itu.
+- **Tanpa JavaScript** switch tampil sebagai dua tautan biasa.
+- Pilihan bahasa tidak diingat: membuka `/` selalu menampilkan versi Indonesia.
+- Tautan `hreflang` antarbahasa belum dipasang karena butuh domain situs yang pasti (`metadataBase`).
 
 ## Motion
 
@@ -86,7 +98,7 @@ Tanpa library animasi; semuanya di `app/globals.css` dan `lib/motion.ts`, dijala
 
 React merender markup-nya; `lib/motion.ts` hanya menganimasikannya. Saat harus menyusun ulang teks (wipe serif, nama yang dipecah per huruf, kalimat yang menyala), modul ini menyimpan node asli dan mengembalikannya saat cleanup.
 
-Dengan `prefers-reduced-motion` atau tanpa JavaScript, semua konten tampil dalam kondisi akhir dan diam, dan navigasi memakai tautan biasa. Jika JavaScript gagal dimuat, skrip di `app/layout.tsx` mengembalikan halaman ke kondisi itu setelah enam detik.
+Dengan `prefers-reduced-motion` atau tanpa JavaScript, semua konten tampil dalam kondisi akhir dan diam, dan navigasi memakai tautan biasa. Jika JavaScript gagal dimuat, skrip di `components/root-document.tsx` mengembalikan halaman ke kondisi itu setelah enam detik.
 
 ## Kontak: penting
 
@@ -96,7 +108,8 @@ Tombol **Buka aplikasi email** membuat URL `mailto:` dengan nama, email, dan pes
 
 Dilakukan pada build produksi (`next build` lalu `next start`) dengan Chrome headless, dibandingkan dengan versi HTML sebelum migrasi:
 
-- **Tata letak:** posisi dan ukuran 67 elemen utama dibandingkan pada lebar 390, 768, 1024, 1440, dan 1920 px. Semuanya sama dalam 1,5 px, kecuali filter project di 390 px yang 2 px lebih sempit.
+- **Tata letak:** posisi dan ukuran 67 elemen utama dibandingkan pada lebar 390, 768, 1024, 1440, dan 1920 px. Semuanya sama dalam 1,5 px, kecuali filter project di 390 px yang 2 px lebih sempit dan tombol Mari berdiskusi yang bergeser untuk memberi ruang bagi switch bahasa.
+- **Dua bahasa:** `/` dan `/en` dimuat di lebar 390 dan 1440 px dengan CPU normal dan diperlambat 6x tanpa error; tidak ada overflow di halaman Inggris dari 320 sampai 1920 px; tidak ada teks Indonesia yang tertinggal di halaman Inggris; switch membuka bahasa lain di section yang sama, lewat klik maupun keyboard, dan tombol Back kembali dengan switch yang benar; draft email versi Inggris memakai kalimat Inggris.
 - **Tidak ditemukan** horizontal overflow, aset gagal dimuat, error hidrasi React, atau JavaScript runtime error, termasuk saat CPU diperlambat 4x dan 8x.
 - **Lensa navbar:** tahan, geser, lepas; tidak bergerak vertikal; berhenti di tengah item pertama dan terakhir; klik dan tombol panah keyboard berpindah section dan memperbarui alamat.
 - **Tanpa pinggiran warna:** piksel di sekitar lensa navbar dan filter diperiksa saat diam, ditahan, dan diseret di antara dua tab, termasuk di atas judul hero; tidak ada piksel berwarna di luar biru halaman.
@@ -105,12 +118,12 @@ Dilakukan pada build produksi (`next build` lalu `next start`) dengan Chrome hea
 - **Form:** kolom kosong dan hanya spasi ditolak; nama serta pesan dengan karakter khusus ter-encode benar. Hanya pembentukan draft yang diperiksa, tanpa mengirim email atau meluncurkan aplikasi email.
 - **Sentuhan:** geser vertikal yang dimulai di atas tombol dan filter tetap men-scroll halaman; tap dan geser mendatar tetap berfungsi.
 - **Tanpa JavaScript, reduced motion, reduced transparency,** dan mode development (React Strict Mode).
-- **Axe-core 4.10.3**, rule tags WCAG 2 A/AA dan WCAG 2.1 AA: 0 pelanggaran otomatis pada 390 dan 1440 px dalam kondisi akhir, dengan 1 pemeriksaan kontras yang memerlukan peninjauan manual per ukuran, sama seperti versi sebelum migrasi. Bukan sertifikasi aksesibilitas lengkap.
+- **Axe-core 4.10.3**, rule tags WCAG 2 A/AA dan WCAG 2.1 AA: 0 pelanggaran otomatis pada 390 dan 1440 px di kedua bahasa dalam kondisi akhir, dengan 1 pemeriksaan kontras yang memerlukan peninjauan manual per ukuran, sama seperti versi sebelum migrasi. Bukan sertifikasi aksesibilitas lengkap.
 
 Belum diuji: Safari, Firefox, dan perangkat fisik. Kehalusan gerakan dan performa di perangkat nyata dinilai dari frame statis saja. Ketersediaan tautan eksternal tidak diverifikasi.
 
 ## Catatan migrasi
 
-- JavaScript yang dikirim ke pengunjung sekitar 200 KB (gzip), naik dari sekitar 11 KB pada versi HTML: itu React, Next.js, dan paket kaca.
+- Unduhan kunjungan pertama sekitar 285 KB: JavaScript 168 KB (React dan Next.js sekitar 118 KB, sisanya paket kaca, animasi, dan kode halaman), font 49 KB, gambar 33–42 KB, CSS dan HTML 25 KB. JavaScript-nya naik dari sekitar 11 KB pada versi HTML.
 - Tab navbar dan filter kini berperan sebagai `tablist` (bawaan paket), bukan tautan dan tombol toggle.
 - Panah pada tombol dan tautan kini benar-benar bertukar saat di-hover; pada versi HTML panahnya menghilang karena selektor yang meleset.
