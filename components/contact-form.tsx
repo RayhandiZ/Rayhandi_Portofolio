@@ -4,13 +4,16 @@ import { useRef, useState, type FormEvent } from "react";
 import { flushSync } from "react-dom";
 import { GlassButton } from "@zakisheriff/liquid-glass";
 import { Arrow } from "@/components/arrow";
+import { CONTENT } from "@/lib/content";
 import { useHydrated } from "@/lib/hooks";
+import type { Lang } from "@/lib/i18n";
 import { EMAIL } from "@/lib/site";
 
 type Field = HTMLInputElement | HTMLTextAreaElement;
 
 /** Prepares a mailto: draft in the visitor's own email app. Nothing is sent from the site. */
-export function ContactForm() {
+export function ContactForm({ lang }: { lang: Lang }) {
+  const t = CONTENT[lang].contact.form;
   const hydrated = useHydrated();
   const draftLink = useRef<HTMLAnchorElement>(null);
   const [draft, setDraft] = useState<string | null>(null);
@@ -25,15 +28,13 @@ export function ContactForm() {
     const form = event.currentTarget;
     const fields = [...form.querySelectorAll<Field>("input, textarea")];
     fields.forEach((field) =>
-      field.setCustomValidity(
-        field.value.trim() ? "" : "Mohon isi kolom ini, bukan hanya spasi.",
-      ),
+      field.setCustomValidity(field.value.trim() ? "" : t.blank),
     );
     if (!form.reportValidity()) return;
     const [name, email, message] = fields.map((field) => field.value.trim());
-    const subject = encodeURIComponent(`Pesan dari ${name} — Website Portofolio`);
+    const subject = encodeURIComponent(t.subject(name));
     const body = encodeURIComponent(
-      `Halo Rayhandi,\n\n${message}\n\nSalam,\n${name}\n${email}`,
+      `${t.greeting}\n\n${message}\n\n${t.signOff}\n${name}\n${email}`,
     );
     // The link has to be in the page before it can be followed.
     flushSync(() => setDraft(`mailto:${EMAIL}?subject=${subject}&body=${body}`));
@@ -48,7 +49,8 @@ export function ContactForm() {
       onSubmit={onSubmit}
     >
       <h3>
-        Mari mulai sesuatu<span className="tuck">.</span>
+        {t.title.lead}
+        <span className="tuck">{t.title.tuck}</span>
       </h3>
       <div className="form-row">
         <div className="field">
@@ -60,7 +62,7 @@ export function ContactForm() {
             required
             maxLength={100}
           />
-          <label htmlFor="fieldName">Nama</label>
+          <label htmlFor="fieldName">{t.name}</label>
         </div>
         <div className="field">
           <input
@@ -72,7 +74,7 @@ export function ContactForm() {
             required
             maxLength={254}
           />
-          <label htmlFor="fieldEmail">Email</label>
+          <label htmlFor="fieldEmail">{t.email}</label>
         </div>
       </div>
       <div className="field">
@@ -84,7 +86,7 @@ export function ContactForm() {
           required
           maxLength={3000}
         />
-        <label htmlFor="fieldMessage">Ceritakan idemu</label>
+        <label htmlFor="fieldMessage">{t.message}</label>
       </div>
       <GlassButton
         type="submit"
@@ -94,29 +96,23 @@ export function ContactForm() {
         id="contactSubmit"
         disabled={!hydrated}
       >
-        Buka aplikasi email <Arrow glyph="↗" />
+        {t.submit} <Arrow glyph="↗" />
       </GlassButton>
       <p className="form-hint" id="formHint">
-        Form ini menyiapkan draft di aplikasi email, bukan mengirim pesan
-        langsung.
+        {t.hint}
       </p>
       <p id="formStatus" role="status" aria-live="polite">
         {draft && (
           <>
-            Draft siap dibuka; pesan belum terkirim. Kirim melalui aplikasi
-            email kamu. Jika tidak terbuka, atur aplikasi email default atau
-            gunakan alamat email di samping.{" "}
+            {t.ready}{" "}
             <a ref={draftLink} href={draft}>
-              Buka ulang draft email
+              {t.reopen}
             </a>
           </>
         )}
       </p>
       <noscript>
-        <p>
-          Aktifkan JavaScript untuk menggunakan form, atau hubungi melalui
-          tautan email.
-        </p>
+        <p>{t.noScript}</p>
       </noscript>
     </form>
   );

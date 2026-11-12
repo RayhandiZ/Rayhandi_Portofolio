@@ -2,17 +2,15 @@
 
 import { useEffect, useReducer, useRef, useState } from "react";
 import { GlassButton, GlassNav, useRefraction } from "@zakisheriff/liquid-glass";
+import { LanguageSwitch } from "@/components/language-switch";
+import { CONTENT } from "@/lib/content";
 import { useScrolledPast } from "@/lib/hooks";
+import type { Lang } from "@/lib/i18n";
 import { CONTACT_SECTION, NAV_SECTIONS } from "@/lib/site";
 
 const MOBILE_NAV = "(max-width: 900px)";
-const NAV_ITEMS = NAV_SECTIONS.map(({ label }) => ({ label }));
-const SPY_SECTIONS: string[] = [
-  ...NAV_SECTIONS.map(({ id }) => id),
-  CONTACT_SECTION,
-];
-const tabOf = (id: string) =>
-  NAV_SECTIONS.findIndex((section) => section.id === id);
+const SPY_SECTIONS: string[] = [...NAV_SECTIONS, CONTACT_SECTION];
+const tabOf = (id: string) => (NAV_SECTIONS as readonly string[]).indexOf(id);
 
 interface NavState {
   /** Section under the middle of the viewport. */
@@ -51,14 +49,15 @@ function navReducer(state: NavState, action: NavAction): NavState {
   }
 }
 
-export function SiteHeader() {
+export function SiteHeader({ lang }: { lang: Lang }) {
+  const t = CONTENT[lang].nav;
   const bar = useRef<HTMLDivElement>(null);
   const progress = useRef<HTMLSpanElement>(null);
   const firstLink = useRef<HTMLAnchorElement>(null);
   const toggle = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   const [nav, dispatch] = useReducer(navReducer, {
-    current: NAV_SECTIONS[0].id,
+    current: NAV_SECTIONS[0],
     pinned: null,
     tab: 0,
   });
@@ -134,7 +133,7 @@ export function SiteHeader() {
 
   // Tabs are buttons, so they do what a section link does: scroll there and record it in the address.
   const travel = (index: number) => {
-    const { id } = NAV_SECTIONS[index];
+    const id = NAV_SECTIONS[index];
     dispatch({ type: "go", id });
     document.getElementById(id)?.scrollIntoView();
     if (window.location.hash !== `#${id}`)
@@ -159,23 +158,23 @@ export function SiteHeader() {
         id="siteHeader"
       >
         <div ref={bar} className="container nav-bar lg-glass lg-glass--host">
-          <a className="wordmark" href="#beranda" aria-label="Rayhandi Zulmi, beranda">
+          <a className="wordmark" href="#beranda" aria-label={t.homeLabel}>
             RZ
           </a>
           <nav
             id="mainNav"
             className={open ? "main-nav is-open" : "main-nav"}
-            aria-label="Navigasi utama"
+            aria-label={t.mainLabel}
           >
             <GlassNav
               className={away ? "nav-track is-away" : "nav-track"}
-              aria-label="Bagian halaman"
-              items={NAV_ITEMS}
+              aria-label={t.tabsLabel}
+              items={NAV_SECTIONS.map((id) => ({ label: t.sections[id] }))}
               activeIndex={nav.tab}
               onChange={travel}
             />
             <div className="nav-links">
-              {NAV_SECTIONS.map(({ id, label }, index) => (
+              {NAV_SECTIONS.map((id, index) => (
                 <a
                   key={id}
                   ref={index === 0 ? firstLink : undefined}
@@ -184,7 +183,7 @@ export function SiteHeader() {
                   aria-current={active === id ? "true" : undefined}
                   onClick={() => follow(id)}
                 >
-                  {label}
+                  {t.sections[id]}
                 </a>
               ))}
             </div>
@@ -195,16 +194,17 @@ export function SiteHeader() {
               aria-current={away ? "true" : undefined}
               onClick={() => follow(CONTACT_SECTION)}
             >
-              Mari berdiskusi
+              {t.contact}
             </GlassButton>
           </nav>
+          <LanguageSwitch lang={lang} section={active} />
           <button
             ref={toggle}
             type="button"
             className="menu-toggle"
             aria-expanded={open}
             aria-controls="mainNav"
-            aria-label={open ? "Tutup menu" : "Buka menu"}
+            aria-label={open ? t.closeMenu : t.openMenu}
             onClick={() => setOpen(!open)}
           >
             <span />

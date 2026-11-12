@@ -1,18 +1,13 @@
 import { Mark } from "@/components/icons";
-
-const FACTS = [
-  { term: "Berbasis di", detail: "Kab. Tangerang, Indonesia" },
-  { term: "Saat ini", detail: "Internship di Universitas Multimedia Nusantara" },
-];
+import { SplitHeadingText } from "@/components/split-heading";
+import { CONTENT } from "@/lib/content";
+import type { Lang } from "@/lib/i18n";
 
 // Kept from the earlier portfolio; lib/motion.ts counts each number up when it is first seen.
-const STATS = [
-  { count: 15, label: "Project selesai" },
-  { count: 3, label: "Tahun berkarya" },
-  { count: 10, label: "Teknologi" },
-];
+const STAT_COUNTS = [15, 3, 10];
 
-export function About() {
+export function About({ lang }: { lang: Lang }) {
+  const t = CONTENT[lang].about;
   return (
     <section
       className="about-section section unfold"
@@ -27,35 +22,27 @@ export function About() {
             <Mark spin={0.28} />
           </div>
           <p className="aside-caption">
-            Rasa ingin tahu sebagai awal.
+            {t.caption[0]}
             <br />
-            Detail sebagai pembeda.
+            {t.caption[1]}
           </p>
         </div>
         <div className="about-copy">
           <h2 id="about-title">
-            Di balik setiap baris kode<span className="tuck">,</span> ada{" "}
-            <em>rasa ingin tahu.</em>
+            <SplitHeadingText heading={t.title} />
           </h2>
           <p className="about-lead" id="aboutLead">
-            Saya Rayhandi, mahasiswa Sistem Informasi yang percaya bahwa detail
-            kecil membuat perbedaan besar.
+            {t.lead}
           </p>
           <div className="about-body">
-            <p className="reveal">
-              Berawal dari rasa penasaran tentang cara kerja website, saya kini
-              membangun aplikasi web, antarmuka, dan dashboard real-time. Saya
-              senang mengubah ide menjadi produk nyata dengan menjembatani
-              pengolahan data, pengembangan web, dan desain UI/UX.
-            </p>
-            <p className="reveal">
-              Di luar menulis kode, saya mengeksplorasi teknologi baru dan
-              mengasah kepekaan visual. Bagi saya, solusi yang baik bukan hanya
-              fungsional, tetapi juga mudah dipahami.
-            </p>
+            {t.body.map((paragraph) => (
+              <p className="reveal" key={paragraph}>
+                {paragraph}
+              </p>
+            ))}
           </div>
           <dl className="about-facts reveal">
-            {FACTS.map(({ term, detail }) => (
+            {t.facts.map(({ term, detail }) => (
               <div key={term}>
                 <dt>{term}</dt>
                 <dd>{detail}</dd>
@@ -63,10 +50,13 @@ export function About() {
             ))}
           </dl>
           <div className="stats reveal">
-            {STATS.map(({ count, label }) => (
+            {t.stats.map((label, index) => (
               <div className="stat" key={label}>
                 <strong>
-                  <span data-count={count}>{count}</span>+
+                  <span data-count={STAT_COUNTS[index]}>
+                    {STAT_COUNTS[index]}
+                  </span>
+                  +
                 </strong>
                 <span>{label}</span>
               </div>

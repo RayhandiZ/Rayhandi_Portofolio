@@ -1,20 +1,24 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
+import type { ReactNode } from "react";
 import { SvgSprite } from "@/components/icons";
+import { CONTENT } from "@/lib/content";
+import type { Lang } from "@/lib/i18n";
 // The glass stylesheet comes first so the page's own rules can tune it.
 import "@zakisheriff/liquid-glass/styles.css";
-import "./globals.css";
+import "@/app/globals.css";
 
 const jakarta = localFont({
-  src: "./fonts/plus-jakarta-sans.woff2",
+  src: "../app/fonts/plus-jakarta-sans.woff2",
   weight: "200 800",
   style: "normal",
   display: "swap",
   variable: "--font-jakarta",
 });
 
+// Latin-only WOFF2 cut of Cormorant Garamond italic; app/fonts/README.md says how it was made.
 const cormorant = localFont({
-  src: "./fonts/cormorant-italic.ttf",
+  src: "../app/fonts/cormorant-italic.woff2",
   weight: "500",
   style: "italic",
   display: "swap",
@@ -22,13 +26,14 @@ const cormorant = localFont({
   adjustFontFallback: "Times New Roman",
 });
 
-export const metadata: Metadata = {
-  title: "Rayhandi Zulmi",
-  description:
-    "Rayhandi Zulmi — Web Developer, UI/UX Designer & Data Analyst. Project web, dashboard, dan aplikasi yang menghubungkan data dengan pengalaman pengguna.",
-};
+export function metadataFor(lang: Lang): Metadata {
+  return {
+    title: "Rayhandi Zulmi",
+    description: CONTENT[lang].meta.description,
+  };
+}
 
-export const viewport: Viewport = {
+export const VIEWPORT: Viewport = {
   themeColor: "#051221",
   colorScheme: "dark",
 };
@@ -38,14 +43,18 @@ export const viewport: Viewport = {
    are taken back so the page shows complete and still, as it does without JavaScript. */
 const bootScript = `(function(){var r=document.documentElement;r.classList.add("nav-enhanced");if(window.matchMedia("(prefers-reduced-motion: no-preference)").matches)r.classList.add("motion");setTimeout(function(){if(window.__appStarted)return;r.classList.remove("nav-enhanced","motion");window.__motionOff=true},6000)})()`;
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+/** The HTML document both languages share. Each language's root layout renders it with its own `lang`. */
+export function RootDocument({ lang, children }: { lang: Lang; children: ReactNode }) {
   return (
     <html
-      lang="id"
+      lang={lang}
       data-theme="dark"
       className={`${jakarta.variable} ${cormorant.variable}`}
       suppressHydrationWarning
     >
+      {/* This is the root layout's <head>, shared by both languages. The rule only expects it in
+          app/layout files and suggests next/head, which the App Router does not use. */}
+      {/* eslint-disable-next-line @next/next/no-head-element */}
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
       </head>
