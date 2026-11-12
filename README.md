@@ -1,18 +1,46 @@
 # Rayhandi Portofolio V2
 
-Redesign dari portofolio HTML/CSS/JavaScript milik Rayhandi Zulmi. Folder versi asli tidak diubah.
+Portofolio Rayhandi Zulmi, dibangun dengan Next.js 16 (App Router), React 19, dan TypeScript. Versi ini adalah migrasi dari portofolio HTML/CSS/JavaScript: desain, isi, dan gerak dipertahankan, sedangkan semua elemen kaca kini memakai [@zakisheriff/liquid-glass](https://liquidglass.theatom.lk/).
 
-## Cara membuka
+## Menjalankan
 
-Klik dua kali **index.html**. Tidak perlu npm, instalasi framework, koneksi internet, atau proses build. Foto, logo, CSS, JavaScript, dan font tersedia lokal. Tautan GitHub, LinkedIn, dan website project membutuhkan internet.
-
-Untuk preview melalui server lokal, dari folder ini jalankan:
+Butuh Node.js 20.9 atau lebih baru.
 
 ```sh
-python -m http.server 8080 --bind 127.0.0.1
+npm install
+npm run dev      # http://localhost:3000, dengan hot reload
 ```
 
-Kemudian buka http://127.0.0.1:8080. Server ini opsional.
+Untuk memeriksa hasil produksi secara lokal:
+
+```sh
+npm run build
+npm run start
+```
+
+`npm run lint` menjalankan ESLint.
+
+## Deploy
+
+Situs ini statis (halaman `/` di-prerender saat build) dan tidak memerlukan backend atau environment variable. Di Vercel cukup hubungkan repo ini. `vercel.json` menetapkan framework Next.js, karena project Vercel yang dulu dibuat untuk situs HTML statis memakai preset lain. Jika di pengaturan project Vercel pernah diisi Build Command atau Output Directory secara manual, kosongkan keduanya. Optimasi gambar (`next/image`) berjalan otomatis di Vercel.
+
+## Struktur
+
+- `app/layout.tsx`: kerangka HTML, metadata, font lokal (`next/font`), dan skrip kecil yang berjalan sebelum paint pertama.
+- `app/page.tsx`: urutan section halaman.
+- `app/globals.css`: seluruh styling: warna, tata letak, responsive, dan token `--lg-*` yang menyetel tampilan kaca.
+- `components/`: satu file per bagian (`hero`, `work`, `about`, `skills`, `contact`) dan per kontrol (`site-header`, `project-browser`, `contact-form`, `to-top`).
+- `lib/projects.tsx`: data project. `lib/site.ts`: email, tautan, dan daftar section navigasi.
+- `lib/motion.ts`: seluruh motion halaman (lihat di bawah).
+- `config/liquid-glass-loader.cjs`: dua penyesuaian pada paket kaca saat build (lihat Liquid glass).
+- `public/images/`: foto dan logo asli. `app/fonts/`: font lokal beserta lisensi SIL Open Font License.
+
+### Mengubah isi
+
+- **Project:** tambahkan entri pada array `PROJECTS` di `lib/projects.tsx` (kategori, cover, judul, deskripsi, tag, tautan). Jumlah pada filter dihitung otomatis. Entri pertama selalu menjadi project utama.
+- **Teks section:** langsung di file komponennya, misalnya `components/about.tsx`.
+- **Keahlian dan persentase:** `SKILL_GROUPS` dan `SKILL_LEVELS` di `components/skills.tsx`.
+- **Email, GitHub, LinkedIn:** `lib/site.ts`.
 
 ## Arah desain
 
@@ -23,55 +51,66 @@ Gabungan dua versi: atmosfer laut dalam dari [portofolio sebelumnya](https://ray
 - UMN Softskill sebagai featured project, diikuti HIMSI UMN dan DigiTask.
 - Variasi tata letak: hero penuh dengan nama yang menimpa foto, featured project, dua project pendukung, profil, skill, kontak dengan kartu form.
 - Responsive, fokus keyboard, skip link, menu mobile, filter dengan status aksesibel, reduced motion, reduced transparency.
-- Informasi utama tetap terlihat jika JavaScript dimatikan.
+
+Cover project adalah komposisi tipografi dan logo asli, **bukan screenshot antarmuka**. Tidak ditambahkan screenshot, hasil project, atau testimoni fiktif. Angka 15+, 3+, 10+ dan persentase kemampuan dipertahankan dari portofolio awal; bukan hasil verifikasi independen.
+
+## Liquid glass
+
+Kaca berasal dari paket `@zakisheriff/liquid-glass` (MIT), dipakai hanya untuk kontrol yang melayang atau ditekan. Kartu, form, dan stiker foto tetap solid.
+
+| Elemen | Komponen |
+| --- | --- |
+| Kapsul navbar | permukaan kaca lewat `useRefraction` pada elemen sendiri |
+| Tab section di navbar | `GlassNav` |
+| Mari berdiskusi, Kenali saya, Jelajahi project, ikon sosial, tombol ke atas, tombol form | `GlassButton` |
+| Filter project | `GlassSegmented` |
+
+- **Bening:** token `--lg-*` di awal `app/globals.css` menyetel tint navy tipis, blur 3px, dan saturasi 1.9. Brightness diturunkan ke 0.8 supaya label navbar tetap terbaca saat judul putih lewat di belakangnya; di area gelap kacanya tetap terlihat bening.
+- **Lensa:** tahan sebuah tab atau pilihan filter dan pilihannya terangkat menjadi lensa yang bisa digeser. Lensa hanya bergerak mendatar.
+- **Dua penyesuaian pada paket**, dibuat saat build oleh `config/liquid-glass-loader.cjs` (file di `node_modules` tetap asli): lensa tab dan filter tanpa dispersi, jadi rim-nya putih dan huruf di bawah lensa tidak berpinggiran magenta dan hijau; dan lensa yang diseret berhenti tepat di item pertama dan terakhir, tidak melentur melewatinya. Versi paket dikunci di 4.0.0. Jika versi lain dipasang dan kodenya tidak lagi cocok, build berhenti dengan pesan yang jelas. Hapus aturan `turbopack` di `next.config.ts` untuk kembali ke perilaku asli paket.
+- **Pembiasan:** di Chrome dan Edge, kaca membiaskan apa pun di belakangnya. Di Safari, lensa tab dan filter tetap membias; kapsul navbar dan tombol tampil dengan frosting dan rim. Firefox memakai jalur yang sama dengan Safari dan belum diuji oleh pembuat paketnya.
+- **Selama scroll** pembiasan dijeda oleh paketnya dan kembali saat halaman diam.
+- **Sentuhan:** paket ini menahan sentuhan yang dimulai di atas tombolnya, sehingga halaman tidak ikut scroll. `components/glass-touch-scroll.tsx` dan satu aturan `touch-action` mengembalikan scroll vertikal; tap dan geser mendatar tetap milik kontrolnya.
+- **Di section Kontak** tidak ada tab yang aktif: pill memudar dan tombol Mari berdiskusi yang menyala.
+- `prefers-reduced-transparency` mengganti semua kaca dengan warna solid.
 
 ## Motion
 
-Tanpa library; semuanya di `style.css` dan fungsi `startMotion()` di `script.js`.
+Tanpa library animasi; semuanya di `app/globals.css` dan `lib/motion.ts`, dijalankan oleh `components/motion.tsx`.
 
 - **Ide utama, sans ke serif:** bagian `em` pada judul berubah dari Plus Jakarta Sans ke Cormorant italic mengikuti scroll, memerankan kalimat "Dibangun dengan logika. Dirancang dengan rasa." Judul skill melakukan hal yang sama saat di-hover.
 - **Laut (berjalan terus selama hero terlihat):** konstelasi partikel yang tertarik ke kursor, cahaya yang mengitari bingkai foto, dan teks peran yang mengetik sendiri. Berhenti saat hero keluar layar atau tab disembunyikan.
 - **Pembuka:** huruf nama naik satu per satu, foto terbuka dari bawah, stiker menempel terakhir. Tanpa preloader yang memblokir.
 - **Scroll:** foto dan nama bergeser halus, tanda ✳ berputar, band disiplin hanya bergerak saat halaman di-scroll, kartu project bergeser berbeda kecepatan, section About dan Kontak melebar sampai penuh, kalimat About menyala kata demi kata, angka statistik menghitung naik, bar skill terisi, nama besar menutup halaman di footer.
-- **Pointer dan aksi:** kartu project miring 3D dan isinya mengikuti pointer, sudut cover melengkung, cincin mengikuti kursor (kursor asli tetap ada), navbar kaca tanpa blur mengecil saat di-scroll dan kembali normal di paling atas, lensanya meluncur antar-section dan bisa ditahan lalu digeser (di layar lebih dari 900px): lensa membesar keluar dari kapsul, dan saat dilepas menuju item terdekat. Pembelokan cahaya asli hanya di browser Chromium; browser lain menampilkan lensa bening dengan tepi putih, garis tautan tergambar, panah bertukar, label form mengambang, filter memakai View Transitions.
+- **Pointer dan aksi:** kartu project miring 3D dan isinya mengikuti pointer, sudut cover melengkung, cincin mengikuti kursor (kursor asli tetap ada), navbar mengecil saat di-scroll dan kembali normal di paling atas, garis tautan tergambar, panah bertukar saat di-hover, label form mengambang, filter memakai View Transitions.
 
-Dengan `prefers-reduced-motion` atau tanpa JavaScript, semua konten tampil dalam kondisi akhir dan diam.
+React merender markup-nya; `lib/motion.ts` hanya menganimasikannya. Saat harus menyusun ulang teks (wipe serif, nama yang dipecah per huruf, kalimat yang menyala), modul ini menyimpan node asli dan mengembalikannya saat cleanup.
 
-Cover project adalah komposisi tipografi dan logo asli, **bukan screenshot antarmuka**. Tidak ditambahkan screenshot, hasil project, atau testimoni fiktif. Angka 15+, 3+, 10+ dan persentase kemampuan dipertahankan dari portofolio awal; bukan hasil verifikasi independen.
-
-## File yang dapat diedit
-
-- `index.html`: teks, project, profil, tautan, dan kontak.
-- `style.css`: warna, font, tata letak, dan responsive.
-- `script.js`: navigasi mobile, filter, penyiapan draft email, dan motion.
-- `fonts/`: font lokal beserta lisensi SIL Open Font License. File DM Sans tidak dipakai situs dan boleh dihapus.
-- File gambar di root: foto serta logo asli.
-
-Untuk menambahkan project, duplikasikan elemen `article.project-card`, sesuaikan `data-category`, konten, gambar, dan link. Perbarui juga jumlah awal serta angka pada tombol filter di HTML.
+Dengan `prefers-reduced-motion` atau tanpa JavaScript, semua konten tampil dalam kondisi akhir dan diam, dan navigasi memakai tautan biasa. Jika JavaScript gagal dimuat, skrip di `app/layout.tsx` mengembalikan halaman ke kondisi itu setelah enam detik.
 
 ## Kontak: penting
 
-Tombol **Buka aplikasi email** membuat URL `mailto:` dengan nama, email, dan pesan yang di-encode. Pengunjung tetap harus menekan Kirim di aplikasi email mereka. **Tidak ada backend atau pengiriman langsung dari website.** Jika aplikasi email default belum dikonfigurasi, gunakan alamat email yang ditampilkan. Pengujian hanya memeriksa pembentukan draft, tanpa mengirim email atau meluncurkan aplikasi email.
+Tombol **Buka aplikasi email** membuat URL `mailto:` dengan nama, email, dan pesan yang di-encode. Pengunjung tetap harus menekan Kirim di aplikasi email mereka. **Tidak ada backend atau pengiriman langsung dari website.** Jika aplikasi email default belum dikonfigurasi, gunakan alamat email yang ditampilkan.
 
 ## Verifikasi
 
-Dilakukan menggunakan Chrome headless melalui Playwright:
+Dilakukan pada build produksi (`next build` lalu `next start`) dengan Chrome headless, dibandingkan dengan versi HTML sebelum migrasi:
 
-- Tampilan pada lebar 320, 390, 768, 1024, 1440, dan 1920 px.
-- Tidak ditemukan horizontal overflow, gambar rusak, aset gagal dimuat, anchor internal hilang, atau JavaScript runtime error pada ukuran tersebut.
-- Filter Semua/Web/Aplikasi, jumlah hasil, dan perpindahan layout saat satu project tersisa.
-- Menu mobile dibuka lalu ditutup setelah memilih item.
-- Lensa navbar dengan mouse dan sentuhan: tahan, geser, lepas, batal dengan Escape; klik biasa dan tombol Enter tetap berfungsi.
-- Hover judul skill, pengisian bar skill, angka statistik, tombol ke atas, dan sinkronisasi sans-serif pada judul.
-- Loop konstelasi berjalan di hero dan berhenti saat hero keluar layar.
-- Tampilan tanpa JavaScript dan dengan reduced motion.
-- Axe-core 4.10.3, rule tags WCAG 2 A/AA dan WCAG 2.1 AA: 0 pelanggaran otomatis pada 390 dan 1440 px dalam kondisi akhir, dengan 1 pemeriksaan yang memerlukan peninjauan manual per ukuran. Bukan sertifikasi aksesibilitas lengkap. Kata-kata kalimat About sengaja redup (kontras rendah) sebelum menyala karena scroll, dan axe menandainya jika dijalankan pada posisi itu.
-- Screenshot desktop, tablet, dan mobile ditinjau visual. Foto bergerak dinilai dari frame statis, jadi kehalusan gerakan dan performa di perangkat nyata belum diuji.
-- Validasi form kosong dan input hanya spasi; encoding nama serta pesan dengan karakter khusus. Pengujian hanya memeriksa pembentukan draft, tanpa mengirim email.
-- Target URL eksternal dipertahankan dari sumber; ketersediaan layanan eksternal tidak diverifikasi.
+- **Tata letak:** posisi dan ukuran 67 elemen utama dibandingkan pada lebar 390, 768, 1024, 1440, dan 1920 px. Semuanya sama dalam 1,5 px, kecuali filter project di 390 px yang 2 px lebih sempit.
+- **Tidak ditemukan** horizontal overflow, aset gagal dimuat, error hidrasi React, atau JavaScript runtime error, termasuk saat CPU diperlambat 4x dan 8x.
+- **Lensa navbar:** tahan, geser, lepas; tidak bergerak vertikal; berhenti di tengah item pertama dan terakhir; klik dan tombol panah keyboard berpindah section dan memperbarui alamat.
+- **Tanpa pinggiran warna:** piksel di sekitar lensa navbar dan filter diperiksa saat diam, ditahan, dan diseret di antara dua tab, termasuk di atas judul hero; tidak ada piksel berwarna di luar biru halaman.
+- **Filter** Semua/Web/Aplikasi, jumlah hasil, dan perpindahan layout saat satu project tersisa.
+- **Menu mobile:** buka, fokus ke tautan pertama, tutup dengan Escape, tutup setelah memilih.
+- **Form:** kolom kosong dan hanya spasi ditolak; nama serta pesan dengan karakter khusus ter-encode benar. Hanya pembentukan draft yang diperiksa, tanpa mengirim email atau meluncurkan aplikasi email.
+- **Sentuhan:** geser vertikal yang dimulai di atas tombol dan filter tetap men-scroll halaman; tap dan geser mendatar tetap berfungsi.
+- **Tanpa JavaScript, reduced motion, reduced transparency,** dan mode development (React Strict Mode).
+- **Axe-core 4.10.3**, rule tags WCAG 2 A/AA dan WCAG 2.1 AA: 0 pelanggaran otomatis pada 390 dan 1440 px dalam kondisi akhir, dengan 1 pemeriksaan kontras yang memerlukan peninjauan manual per ukuran, sama seperti versi sebelum migrasi. Bukan sertifikasi aksesibilitas lengkap.
 
-## Audit visual
+Belum diuji: Safari, Firefox, dan perangkat fisik. Kehalusan gerakan dan performa di perangkat nyata dinilai dari frame statis saja. Ketersediaan tautan eksternal tidak diverifikasi.
 
-Audit akhir terhadap 10 pola desain generik: **0/10**. Tidak ada gradient tech menyeluruh, violet default, tiga feature tile seragam, accent rail, blur tanpa fungsi, statistik raksasa, icon topper berulang, center-stack menyeluruh, font default tanpa pertimbangan, atau surface yang salah. Monogram dan cover tipografi digunakan sebagai identitas, bukan UI produk fiktif.
+## Catatan migrasi
 
-Website belum di-deploy ke hosting. Unggah isi folder ini ke layanan static hosting bila ingin dipublikasikan; riwayat `.git` asli tidak disertakan.
+- JavaScript yang dikirim ke pengunjung sekitar 200 KB (gzip), naik dari sekitar 11 KB pada versi HTML: itu React, Next.js, dan paket kaca.
+- Tab navbar dan filter kini berperan sebagai `tablist` (bawaan paket), bukan tautan dan tombol toggle.
+- Panah pada tombol dan tautan kini benar-benar bertukar saat di-hover; pada versi HTML panahnya menghilang karena selektor yang meleset.
