@@ -1,7 +1,6 @@
 export const EMAIL = "rayhandizulmi@gmail.com";
 export const GITHUB_URL = "https://github.com/RayhandiZ";
-export const LINKEDIN_URL =
-  "https://www.linkedin.com/in/rayhandi-zulmi-94333a360/";
+export const LINKEDIN_URL = "https://www.linkedin.com/in/rayhandi-zulmi";
 
 /** Sections with a tab in the header, in page order. The contact section has its own button instead.
     The ids stay the same in both languages, so switching language keeps the reader's place. */
