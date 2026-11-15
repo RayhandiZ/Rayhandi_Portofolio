@@ -190,7 +190,6 @@ h1 em,
 h2 em,
 .art-title em,
 .footer-name em,
-.discipline-set em,
 .morph-serif {
   background: var(--grad-sea);
   -webkit-background-clip: text;
@@ -201,8 +200,7 @@ h2 em,
 h1 em,
 h2 em,
 .art-title em,
-.footer-name em,
-.discipline-set em {
+.footer-name em {
   padding: 0.14em 0.12em;
   margin: -0.14em -0.12em;
 }
@@ -818,52 +816,98 @@ html:not(.nav-enhanced) .lang-track {
   font-size: 32px;
 }
 
-/* A band that only moves while you scroll, in the direction you scroll. */
-.discipline-band {
+/* Tool cards in two rows drifting in opposite directions, faded out at both edges.
+   Without motion the rows sit still and wrap, and the duplicate copies stay hidden. */
+.tech-band {
+  --tech-gap: 16px;
+  display: grid;
+  gap: var(--tech-gap);
+  padding-block: 40px;
   border-block: 1px solid var(--line);
-  overflow: hidden;
   background: var(--bg-alt);
+  overflow: hidden;
 }
-.discipline-track {
+.tech-track {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  font-size: clamp(26px, 3vw, 44px);
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.04em;
-  padding-block: 20px;
+  gap: 12px;
+  padding-inline: 16px;
 }
-.discipline-set {
+.tech-set {
+  display: contents;
+}
+.tech-set[aria-hidden] {
+  display: none;
+}
+.tech-card {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
   align-items: center;
-  gap: 0.1em 0.45em;
-  padding-inline: 0.45em;
+  gap: 12px;
+  padding: 12px 22px 12px 14px;
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow:
+    inset 0 0 0 1px var(--line),
+    0 12px 28px -18px rgba(0, 0, 0, 0.7);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   color: var(--text);
+  white-space: nowrap;
+  transition:
+    transform 0.4s var(--ease),
+    background 0.3s,
+    box-shadow 0.3s;
 }
-.discipline-set em {
-  font-size: 1.14em;
-  letter-spacing: -0.02em;
+.tech-card img {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
 }
-.discipline-set .mark {
-  font-size: 0.54em;
-  color: var(--sea);
+.tech-card:hover {
+  transform: translateY(-3px);
+  background: var(--surface-2);
+  box-shadow:
+    inset 0 0 0 1px var(--line-strong),
+    0 16px 30px -18px rgba(0, 0, 0, 0.8);
 }
-.motion .discipline-track {
+.motion .tech-row {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.motion .tech-track {
   flex-wrap: nowrap;
   justify-content: flex-start;
   width: max-content;
-  font-size: clamp(40px, 6.6vw, 100px);
-  padding-block: 0.2em 0.26em;
-  will-change: transform;
+  gap: 0;
+  padding: 6px 0;
+  animation: tech-drift 42s linear infinite;
 }
-.motion .discipline-set {
-  flex-wrap: nowrap;
-  white-space: nowrap;
+/* The second row is a card shorter, so a shorter loop keeps both rows at the same speed. */
+.motion .tech-row:nth-child(2) .tech-track {
+  animation-duration: 36s;
+  animation-direction: reverse;
+}
+.motion .tech-set {
+  display: flex;
   flex-shrink: 0;
-  padding-inline: 0 0.45em;
+  gap: var(--tech-gap);
+  padding-right: var(--tech-gap);
+}
+.tech-band.is-offscreen .tech-track {
+  animation-play-state: paused;
+}
+@media (hover: hover) and (pointer: fine) {
+  .motion .tech-row:hover .tech-track {
+    animation-play-state: paused;
+  }
+}
+/* One copy out of the four in .tech-track, so the loop restarts on an identical frame. */
+@keyframes tech-drift {
+  to {
+    transform: translate3d(-25%, 0, 0);
+  }
 }
 
 /* Work: one full-width lead piece, followed by two supporting pieces set off the grid. */
@@ -929,11 +973,131 @@ h2 em {
 .lg-track.filters .lg-track__item[aria-selected="true"] {
   color: var(--white);
 }
-.project-grid {
+/* Timeline: a centre line with one dot per project. The card sits on one side and the period on the other,
+   swapping sides down the line. Each entry draws the line down to the next dot; lib/motion.ts sets --seg to
+   fill it as you read, and .is-reached lights the dot. Without motion the line shows filled. */
+.timeline {
+  --dot: 20px;
+  --dot-y: 40px;
+  --spine: 96px;
+  position: relative;
+}
+.timeline-item {
+  position: relative;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 64px 40px;
+  grid-template-columns: 1fr var(--spine) 1fr;
   align-items: start;
+  padding-bottom: 88px;
+}
+.timeline-item::before,
+.timeline-item::after {
+  content: "";
+  position: absolute;
+  left: calc(50% - 1px);
+  top: var(--dot-y);
+  bottom: calc(var(--dot-y) * -1);
+  width: 2px;
+  background: var(--line);
+}
+.timeline-item::after {
+  background: linear-gradient(var(--sea-light), var(--sea));
+  transform: scaleY(var(--seg, 1));
+  transform-origin: top;
+}
+.timeline-end {
+  padding-bottom: 0;
+}
+.timeline-end::before,
+.timeline-end::after {
+  display: none;
+}
+.timeline-dot {
+  position: absolute;
+  z-index: 1;
+  left: calc(50% - var(--dot) / 2);
+  top: calc(var(--dot-y) - var(--dot) / 2);
+  width: var(--dot);
+  height: var(--dot);
+  border-radius: 50%;
+  background: var(--sea-light);
+  box-shadow:
+    inset 0 0 0 2px var(--sea-light),
+    0 0 0 6px var(--sea-soft);
+  transition:
+    background 0.5s,
+    box-shadow 0.5s;
+}
+/* The arm from the dot to the card. */
+.timeline-dot::before {
+  content: "";
+  position: absolute;
+  top: calc(50% - 1px);
+  width: calc(var(--spine) / 2 - var(--dot) / 2);
+  height: 2px;
+  background: var(--sea-light);
+  transition: background 0.5s;
+}
+.timeline-left .timeline-dot::before {
+  right: 100%;
+}
+.timeline-right .timeline-dot::before {
+  left: 100%;
+}
+/* Not yet passed by the fill: an empty ring and a quiet arm. */
+.motion .timeline-item:not(.is-reached) .timeline-dot {
+  background: var(--bg);
+  box-shadow: inset 0 0 0 2px var(--sea-light);
+}
+.motion .timeline-item:not(.is-reached) .timeline-dot::before {
+  background: var(--line-strong);
+}
+.timeline-left .project-card {
+  grid-column: 1;
+  grid-row: 1;
+}
+.timeline-left .timeline-when {
+  grid-column: 3;
+  grid-row: 1;
+}
+.timeline-right .project-card {
+  grid-column: 3;
+  grid-row: 1;
+}
+.timeline-right .timeline-when {
+  grid-column: 1;
+  grid-row: 1;
+  align-items: flex-end;
+  text-align: right;
+}
+.timeline-when {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: calc(var(--dot-y) - 20px);
+}
+.timeline-when span {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  color: var(--white);
+}
+.timeline-when small {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--sea-light);
+}
+.timeline-item:nth-child(1) {
+  view-transition-name: project-one;
+}
+.timeline-item:nth-child(2) {
+  view-transition-name: project-two;
+}
+.timeline-item:nth-child(3) {
+  view-transition-name: project-three;
+}
+.timeline-item:nth-child(4) {
+  view-transition-name: project-four;
 }
 .project-card {
   min-width: 0;
@@ -952,23 +1116,9 @@ h2 em {
     inset 0 0 0 1px var(--line-strong),
     var(--shadow);
 }
-.project-card:nth-child(1) {
-  view-transition-name: project-one;
-}
-.project-card:nth-child(2) {
-  view-transition-name: project-two;
-}
-.project-card:nth-child(3) {
-  view-transition-name: project-three;
-}
-.project-featured {
-  grid-column: 1/-1;
-  display: grid;
-  grid-template-columns: 1.42fr 1fr;
-}
 .project-art {
   position: relative;
-  min-height: 400px;
+  min-height: 330px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -998,14 +1148,13 @@ h2 em {
   padding-left: 64px;
 }
 .art-softskill {
-  min-height: 540px;
   background: radial-gradient(90% 110% at 18% 8%, #17507f, #0c2a47 72%);
   color: var(--sea-foam);
 }
 .art-title {
   position: relative;
   z-index: 1;
-  font-size: clamp(50px, 7.2vw, 108px);
+  font-size: clamp(44px, 4.6vw, 68px);
   font-weight: 700;
   line-height: 0.98;
   letter-spacing: -0.055em;
@@ -1059,20 +1208,8 @@ h2 em {
 .project-body {
   padding: 28px 30px 32px;
 }
-.project-featured .project-body {
-  padding: 44px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-.project-kicker {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--sea-light);
-  margin-bottom: 10px;
-}
 .project-body h3 {
-  font-size: clamp(24px, 2.3vw, 32px);
+  font-size: clamp(22px, 2vw, 28px);
   line-height: 1.18;
   letter-spacing: -0.035em;
   font-weight: 700;
@@ -1183,6 +1320,93 @@ h2 em {
   border-radius: 18px;
   object-fit: contain;
 }
+/* EWS: the cross-validation result itself, FNN in sea and BiLSTM in sand, over chart-paper rules. */
+.art-ews {
+  background:
+    linear-gradient(rgba(140, 207, 255, 0.07) 1px, transparent 1px) 0 0 / 100% 44px,
+    radial-gradient(100% 120% at 82% 0%, #134069, #081d33 70%);
+  color: var(--sea-foam);
+}
+/* Title and chart side by side, sitting on the same baseline; the chart drops below when space runs out. */
+.ews-stage {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 8px 20px;
+  position: relative;
+  z-index: 1;
+}
+.ews-chart {
+  width: min(210px, 100%);
+  padding-bottom: 20px;
+  translate: calc(var(--mx, 0) * -34px) calc(var(--my, 0) * -22px);
+  transition: translate 1.1s var(--ease-out);
+}
+.ews-plot {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  height: 120px;
+  border-bottom: 1px solid var(--line-strong);
+}
+/* Chance level, the line every model has to clear. */
+.ews-plot::before {
+  content: "";
+  position: absolute;
+  inset: auto 0 50%;
+  border-top: 1px dashed rgba(212, 238, 255, 0.35);
+}
+.ews-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 100%;
+}
+.ews-bar {
+  width: 13px;
+  height: calc(var(--v) * 100%);
+  border-radius: 4px 4px 0 0;
+  background: var(--sea-light);
+  transform-origin: bottom;
+  transition: transform 0.9s var(--ease-out);
+}
+.ews-bar-alt {
+  background: var(--sand);
+}
+.project-card:hover .ews-bar {
+  transform: scaleY(1.04);
+}
+.ews-axis {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.ews-axis span {
+  width: 36px;
+  text-align: center;
+}
+.ews-legend {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+}
+.ews-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--sea-light);
+}
+.ews-swatch-alt {
+  margin-left: 8px;
+  background: var(--sand);
+}
 .work-foot {
   display: flex;
   align-items: center;
@@ -1199,11 +1423,6 @@ h2 em {
 }
 .work.section {
   padding-block: 120px;
-}
-@media (min-width: 761px) {
-  .project-card:nth-child(3):not(.project-featured) {
-    margin-top: 96px;
-  }
 }
 
 /* About: the monogram holds still while the sentence lights up beside it. */
@@ -1456,6 +1675,28 @@ h2 em {
   border-radius: 6px;
   background: var(--surface-2);
   accent-color: var(--sea);
+}
+.skill-levels-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 2px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sea-light);
+}
+.skill-levels-toggle > span {
+  transition: transform 0.4s var(--ease);
+}
+.skill-levels-toggle:hover > span {
+  transform: translateY(2px);
+}
+.skill-levels-toggle[aria-expanded="true"]:hover > span {
+  transform: translateY(-2px);
 }
 meter::-webkit-meter-bar {
   background: var(--surface-2);
@@ -1963,11 +2204,8 @@ body:has(.lg-track[data-lifted]) .cursor-ring.is-on {
   .contact-layout {
     gap: 48px;
   }
-  .project-featured .project-body {
-    padding: 28px;
-  }
-  .art-softskill {
-    min-height: 430px;
+  .timeline {
+    --spine: 72px;
   }
   .umn-logo {
     width: 72px;
@@ -1981,11 +2219,8 @@ body:has(.lg-track[data-lifted]) .cursor-ring.is-on {
     grid-template-columns: 1fr;
     gap: 16px;
   }
-  .project-grid {
-    gap: 48px 24px;
-  }
   .project-art {
-    min-height: 320px;
+    min-height: 310px;
   }
   .hero-socials {
     margin-left: 0;
@@ -2022,6 +2257,44 @@ body:has(.lg-track[data-lifted]) .cursor-ring.is-on {
 @media (max-width: 900px) {
   .nav-enhanced .menu-toggle {
     display: flex;
+  }
+  .timeline {
+    --spine: 36px;
+    --dot-y: 16px;
+  }
+  .timeline-item {
+    grid-template-columns: var(--spine) 1fr;
+    column-gap: 14px;
+    padding-bottom: 64px;
+  }
+  .timeline-item::before,
+  .timeline-item::after {
+    left: calc(var(--spine) / 2 - 1px);
+  }
+  .timeline-dot {
+    left: calc(var(--spine) / 2 - var(--dot) / 2);
+  }
+  .timeline-dot::before {
+    display: none;
+  }
+  .timeline-item .timeline-when {
+    grid-column: 2;
+    grid-row: 1;
+    flex-direction: row;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    text-align: left;
+    padding-top: calc(var(--dot-y) - 16px);
+    margin-bottom: 18px;
+  }
+  .timeline-when span {
+    font-size: 24px;
+    line-height: 32px;
+  }
+  .timeline-item .project-card {
+    grid-column: 2;
+    grid-row: 2;
   }
   .nav-enhanced .main-nav {
     position: fixed;
@@ -2097,6 +2370,20 @@ body:has(.lg-track[data-lifted]) .cursor-ring.is-on {
 @media (max-width: 760px) {
   .container {
     width: calc(100% - 40px);
+  }
+  .tech-band {
+    --tech-gap: 12px;
+    padding-block: 28px;
+  }
+  .tech-card {
+    gap: 10px;
+    padding: 10px 16px 10px 12px;
+    border-radius: 14px;
+    font-size: 14px;
+  }
+  .tech-card img {
+    width: 26px;
+    height: 26px;
   }
   .section,
   .work.section {
@@ -2202,21 +2489,20 @@ body:has(.lg-track[data-lifted]) .cursor-ring.is-on {
     max-width: 80px;
     line-height: 1.3;
   }
-  .project-grid {
-    gap: 40px 22px;
-  }
-  .project-featured {
-    grid-template-columns: 1fr;
-  }
-  .project-featured .project-body,
   .project-body {
     padding: 24px;
   }
-  .art-softskill {
-    min-height: 360px;
-  }
   .art-title {
-    font-size: 15vw;
+    font-size: 11vw;
+  }
+  .ews-chart {
+    width: min(220px, 100%);
+  }
+  .ews-plot {
+    height: 110px;
+  }
+  .ews-bar {
+    width: 12px;
   }
   .umn-logo {
     width: 58px;
@@ -2227,9 +2513,6 @@ body:has(.lg-track[data-lifted]) .cursor-ring.is-on {
   .project-art {
     padding: 20px;
     min-height: 290px;
-  }
-  .project-card:not(.project-featured) {
-    grid-column: 1/-1;
   }
   .art-top,
   .art-bottom {
@@ -2434,7 +2717,7 @@ body:has(.lg-track[data-lifted]) .cursor-ring.is-on {
   .to-top,
   .skip-link,
   .cursor-ring,
-  .discipline-band,
+  .tech-band,
   .footer-name,
   .morph-sans {
     display: none !important;

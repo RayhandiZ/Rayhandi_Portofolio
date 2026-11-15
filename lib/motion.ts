@@ -46,8 +46,6 @@ interface Stage {
   context: CanvasRenderingContext2D;
   rim: HTMLElement;
   typed: HTMLElement;
-  track: HTMLElement;
-  firstSet: Element;
   lead: HTMLElement;
   heroEm: HTMLElement;
   nameFirst: HTMLElement;
@@ -61,29 +59,27 @@ function run(signal: AbortSignal, cleanups: Array<() => void>) {
   const canvas = document.getElementById("heroCanvas") as HTMLCanvasElement | null;
   const rim = document.getElementById("portraitRim");
   const typed = document.getElementById("typedRole");
-  const track = document.getElementById("disciplineTrack");
   const lead = document.getElementById("aboutLead");
   const heroEm = hero?.querySelector<HTMLElement>("h1 em");
   const nameFirst = hero?.querySelector<HTMLElement>(".name-first");
   const portraitImage = hero?.querySelector<HTMLElement>(".portrait-frame img");
   const note = hero?.querySelector<HTMLElement>(".portrait-note");
   const title = hero?.querySelector<HTMLElement>("h1");
-  const firstSet = track?.firstElementChild;
   const context = canvas?.getContext("2d");
   if (
-    !hero || !canvas || !context || !rim || !typed || !track || !lead ||
-    !heroEm || !nameFirst || !portraitImage || !note || !title || !firstSet
+    !hero || !canvas || !context || !rim || !typed || !lead ||
+    !heroEm || !nameFirst || !portraitImage || !note || !title
   )
     return;
   animate(
-    { hero, canvas, context, rim, typed, track, firstSet, lead, heroEm, nameFirst, portraitImage, note, title },
+    { hero, canvas, context, rim, typed, lead, heroEm, nameFirst, portraitImage, note, title },
     signal,
     cleanups,
   );
 }
 
 function animate(
-  { hero, canvas, context, rim, typed, track, firstSet, lead, heroEm, nameFirst, portraitImage, note, title }: Stage,
+  { hero, canvas, context, rim, typed, lead, heroEm, nameFirst, portraitImage, note, title }: Stage,
   signal: AbortSignal,
   cleanups: Array<() => void>,
 ) {
@@ -470,21 +466,16 @@ function animate(
     });
   });
 
-  /* Marquee: enough copies of the set to cover twice the viewport. */
-  let setWidth = 1;
-  function fillTrack() {
-    setWidth = firstSet.getBoundingClientRect().width || 1;
-    const needed = Math.ceil((window.innerWidth * 2) / setWidth) + 1;
-    while (track.children.length < needed) {
-      const clone = firstSet.cloneNode(true) as Element;
-      clone.setAttribute("aria-hidden", "true");
-      track.append(clone);
-    }
+  /* Tech band: the rows drift on their own in CSS; hold them still while the band is off screen. */
+  const techBand = document.querySelector<HTMLElement>(".tech-band");
+  if (techBand) {
+    watch(
+      new IntersectionObserver(([entry]) => {
+        techBand.classList.toggle("is-offscreen", !entry.isIntersecting);
+      }),
+    ).observe(techBand);
+    cleanups.push(() => techBand.classList.remove("is-offscreen"));
   }
-  cleanups.push(() => {
-    [...track.children].slice(1).forEach((clone) => clone.remove());
-    track.style.removeProperty("transform");
-  });
 
   /* Lit sentence, word by word. */
   const leadWords = (lead.textContent ?? "").trim().split(/\s+/);
@@ -586,11 +577,20 @@ function animate(
   const spinners = [
     ...document.querySelectorAll<SVGElement>("[data-spin]"),
   ].map((element) => ({ element, rate: Number(element.dataset.spin) }));
-  const depthCards = projects.map((element) => ({
+  // Project timeline: the line fills down to a reading point just below the middle of the screen, and each
+  // dot lights once the fill has passed it. Hidden (filtered out) entries are skipped.
+  const timeline = document.querySelector<HTMLElement>(".timeline");
+  const timelineItems = [
+    ...(timeline?.querySelectorAll<HTMLElement>(".timeline-item") ?? []),
+  ].map((element) => ({
     element,
-    rate: Number(element.dataset.depth),
+    dot: element.querySelector<HTMLElement>(".timeline-dot"),
     top: 0,
+    height: 1,
+    fill: -1,
+    reached: false,
   }));
+  let timelineTop = 0;
   const unfolds = [...document.querySelectorAll<HTMLElement>(".unfold")].map(
     (element) => ({ element, value: -1, top: 0 }),
   );
@@ -599,7 +599,10 @@ function animate(
   clearStyles(nameFirst, "translate");
   clearStyles(heroEm, "translate");
   spinners.forEach(({ element }) => clearStyles(element, "rotate"));
-  depthCards.forEach(({ element }) => clearStyles(element, "translate"));
+  timelineItems.forEach(({ element }) => {
+    clearStyles(element, "--seg");
+    cleanups.push(() => element.classList.remove("is-reached"));
+  });
   unfolds.forEach(({ element }) => clearStyles(element, "clip-path"));
 
   let viewport = window.innerHeight;
@@ -616,16 +619,16 @@ function animate(
     unfolds.forEach((item) => {
       item.top = docTop(item.element);
     });
-    depthCards.forEach((item) => {
-      item.top = item.element.offsetTop;
+    if (timeline) timelineTop = docTop(timeline);
+    timelineItems.forEach((item) => {
+      const dotCentre = item.dot ? item.dot.offsetTop + item.dot.offsetHeight / 2 : 0;
+      item.top = item.element.offsetTop + dotCentre;
+      item.height = Math.max(item.element.offsetHeight, 1);
     });
     leadBox = { top: docTop(lead), height: lead.offsetHeight };
-    fillTrack();
   }
 
   let smooth = window.scrollY;
-  let previous = smooth;
-  let bandOffset = 0;
   let running = false;
   function wake() {
     if (running || signal.aborted) return;
@@ -637,8 +640,6 @@ function animate(
     const actual = window.scrollY;
     smooth += (actual - smooth) * 0.13;
     if (Math.abs(actual - smooth) < 0.05) smooth = actual;
-    const delta = smooth - previous;
-    previous = smooth;
 
     // Hero: the photograph drifts inside its frame while the two names part slightly.
     const heroShift = clamp(smooth / 900);
@@ -651,22 +652,23 @@ function animate(
       }
     }
 
-    bandOffset = (bandOffset - delta * 0.55) % setWidth;
-    track.style.transform = `translate3d(${(bandOffset > 0 ? bandOffset - setWidth : bandOffset).toFixed(1)}px,0,0)`;
     spinners.forEach(({ element, rate }) => {
       element.style.rotate = `${(smooth * rate).toFixed(1)}deg`;
     });
 
-    depthCards.forEach(({ element, rate, top }) => {
-      if (
-        mobileLayout.matches ||
-        !rate ||
-        element.classList.contains("project-featured")
-      ) {
-        element.style.translate = "";
-        return;
+    const reading = smooth + viewport * 0.55 - timelineTop;
+    timelineItems.forEach((item) => {
+      if (item.element.hidden) return;
+      const fill = Number(clamp((reading - item.top) / item.height).toFixed(3));
+      if (fill !== item.fill) {
+        item.fill = fill;
+        item.element.style.setProperty("--seg", String(fill));
       }
-      element.style.translate = `0 ${((smooth + viewport / 2 - top) * rate).toFixed(1)}px`;
+      const reached = reading >= item.top;
+      if (reached !== item.reached) {
+        item.reached = reached;
+        item.element.classList.toggle("is-reached", reached);
+      }
     });
 
     const atEnd = actual >= maxScroll - 2;

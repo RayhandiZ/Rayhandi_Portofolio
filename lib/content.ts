@@ -2,7 +2,7 @@ import type { Lang } from "@/lib/i18n";
 import type { NavSectionId } from "@/lib/site";
 
 /* Every visible text of the page, in both languages. Labels that the Indonesian page already shows in
-   English ("Selected work", "Let's connect", the discipline band) stay the same in both and live in the
+   English ("Selected work", "Let's connect", the tech band) stay the same in both and live in the
    components. Project texts live with the projects in lib/projects.tsx. */
 
 /** A heading that ends in serif italic: `lead`, an optional tucked punctuation mark, then `em`. */
@@ -43,7 +43,7 @@ export interface Content {
     title: SplitHeading;
     intro: string;
     filterLabel: string;
-    filters: { all: string; web: string; app: string };
+    filters: { all: string; web: string; app: string; data: string };
     status: (shown: number) => string;
     more: string;
   };
@@ -63,6 +63,8 @@ export interface Content {
     summaries: [string, string, string];
     levelsTitle: string;
     levelsNote: string;
+    showMore: string;
+    showLess: string;
   };
   contact: {
     tagline: string;
@@ -137,7 +139,7 @@ export const CONTENT: Record<Lang, Content> = {
       intro:
         "Beberapa project yang mempertemukan pengembangan, data, dan desain.",
       filterLabel: "Filter project",
-      filters: { all: "Semua", web: "Web", app: "Aplikasi" },
+      filters: { all: "Semua", web: "Web", app: "Aplikasi", data: "Data" },
       status: (shown) => `${shown} project ditampilkan`,
       more: "Eksplorasi lainnya ada di GitHub.",
     },
@@ -158,7 +160,7 @@ export const CONTENT: Record<Lang, Content> = {
         { term: "Berbasis di", detail: "Kab. Tangerang, Indonesia" },
         {
           term: "Saat ini",
-          detail: "Internship di Universitas Multimedia Nusantara",
+          detail: "Front-end Developer Intern di Universitas Multimedia Nusantara",
         },
       ],
       stats: ["Project selesai", "Tahun berkarya", "Teknologi"],
@@ -167,7 +169,7 @@ export const CONTENT: Record<Lang, Content> = {
       tagline: "Selalu ada hal baru untuk dipelajari.",
       title: {
         lead: "Satu ide",
-        tuck: ".",
+        tuck: ",",
         em: "Banyak kemungkinan.",
         breakBefore: true,
       },
@@ -182,6 +184,8 @@ export const CONTENT: Record<Lang, Content> = {
       ],
       levelsTitle: "Penilaian kemampuan pribadi",
       levelsNote: "Penilaian mandiri dari portofolio awal.",
+      showMore: "Lihat lebih lanjut",
+      showLess: "Tampilkan lebih sedikit",
     },
     contact: {
       tagline: "Punya project, ide, atau peluang kolaborasi?",
@@ -257,7 +261,7 @@ export const CONTENT: Record<Lang, Content> = {
       },
       intro: "A few projects where development, data, and design meet.",
       filterLabel: "Filter projects",
-      filters: { all: "All", web: "Web", app: "Apps" },
+      filters: { all: "All", web: "Web", app: "Apps", data: "Data" },
       status: (shown) => `${shown} ${shown === 1 ? "project" : "projects"} shown`,
       more: "More experiments live on GitHub.",
     },
@@ -276,7 +280,10 @@ export const CONTENT: Record<Lang, Content> = {
       ],
       facts: [
         { term: "Based in", detail: "Tangerang Regency, Indonesia" },
-        { term: "Currently", detail: "Intern at Universitas Multimedia Nusantara" },
+        {
+          term: "Currently",
+          detail: "Front-end Developer Intern at Universitas Multimedia Nusantara",
+        },
       ],
       stats: ["Projects completed", "Years of building", "Technologies"],
     },
@@ -299,6 +306,8 @@ export const CONTENT: Record<Lang, Content> = {
       ],
       levelsTitle: "Self-assessed skill levels",
       levelsNote: "Self-assessment carried over from the first portfolio.",
+      showMore: "Show more",
+      showLess: "Show less",
     },
     contact: {
       tagline: "Have a project, an idea, or a chance to collaborate?",

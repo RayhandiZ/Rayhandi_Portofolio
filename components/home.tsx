@@ -1,10 +1,11 @@
 import { About } from "@/components/about";
 import { Contact } from "@/components/contact";
 import { GlassTouchScroll } from "@/components/glass-touch-scroll";
-import { DisciplineBand, Hero } from "@/components/hero";
+import { Hero } from "@/components/hero";
 import { Motion } from "@/components/motion";
 import { SiteHeader } from "@/components/site-header";
 import { Skills } from "@/components/skills";
+import { TechBand } from "@/components/tech-band";
 import { ToTop } from "@/components/to-top";
 import { Work } from "@/components/work";
 import { CONTENT } from "@/lib/content";
@@ -20,7 +21,7 @@ export function Home({ lang }: { lang: Lang }) {
       <SiteHeader lang={lang} />
       <main id="main">
         <Hero lang={lang} />
-        <DisciplineBand />
+        <TechBand />
         <Work lang={lang} />
         <About lang={lang} />
         <Skills lang={lang} />
