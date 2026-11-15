@@ -294,6 +294,20 @@ h2 em,
   touch-action: pan-y pinch-zoom;
 }
 
+/* Touch screens: a held lens (ID | EN, the project filter) shows the real labels beneath it rather than
+   the library's refracted copy of them. The library masks the labels out under the lens and relies on
+   the copy to put them back; where a mobile browser draws that copy blank, the label vanished for as
+   long as the finger stayed down. The lens still lifts, slides, and tints the label it covers. */
+@media (pointer: coarse) {
+  .lg-track__lens > .lg-mirror {
+    display: none !important;
+  }
+  .lg-track[data-lifted] > .lg-track__item :is(.lg-nav__label, .lg-nav__icon) {
+    -webkit-mask: none !important;
+    mask: none !important;
+  }
+}
+
 /* Header capsule: a glass host from the library, so the mobile overlay and the buttons inside are not
    trapped in its backdrop. It tightens once the page leaves the top and returns to full size back there. */
 .site-header {
@@ -821,6 +835,9 @@ html:not(.nav-enhanced) .lang-track {
 .tech-band {
   --tech-gap: 16px;
   display: grid;
+  /* minmax(0, …) keeps each row as wide as the screen. Left to grow with its track (thousands of pixels),
+     the edge fade would be measured on that width: a huge fade on the left and none on the right. */
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--tech-gap);
   padding-block: 40px;
   border-block: 1px solid var(--line);
