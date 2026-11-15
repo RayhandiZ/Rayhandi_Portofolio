@@ -118,22 +118,3 @@ export function Hero({ lang }: { lang: Lang }) {
     </section>
   );
 }
-
-export function DisciplineBand() {
-  return (
-    <div className="discipline-band">
-      <div className="discipline-track" id="disciplineTrack">
-        <div className="discipline-set">
-          <span>Web developer</span>
-          <Mark spin={0.3} />
-          <em>UI/UX design</em>
-          <Mark spin={0.3} />
-          <span>Data analytics</span>
-          <Mark spin={0.3} />
-          <em>Dashboard</em>
-          <Mark spin={0.3} />
-        </div>
-      </div>
-    </div>
-  );
-}

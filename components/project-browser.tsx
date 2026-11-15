@@ -10,7 +10,7 @@ import { PROJECTS, type Project, type ProjectCategory } from "@/lib/projects";
 
 type Filter = "all" | ProjectCategory;
 
-const FILTERS: Filter[] = ["all", "web", "app"];
+const FILTERS: Filter[] = ["all", "web", "app", "data"];
 const matches = (filter: Filter, project: Project) =>
   filter === "all" || project.category === filter;
 
@@ -27,7 +27,7 @@ function ProjectLink({ label, href, secondary }: { label: string; href: string; 
   );
 }
 
-/** The filter and the project cards. Cards stay in the page when filtered out, so they can animate back. */
+/** The filter and the project timeline. Entries stay in the page when filtered out, so they can animate back. */
 export function ProjectBrowser({ lang }: { lang: Lang }) {
   const t = CONTENT[lang].work;
   const [selected, setSelected] = useState(0);
@@ -41,9 +41,6 @@ export function ProjectBrowser({ lang }: { lang: Lang }) {
   });
   const filter = FILTERS[selected];
   const visible = PROJECTS.filter((project) => matches(filter, project));
-  // A supporting project left on its own takes the lead layout instead of leaving half a row empty.
-  const supporting = visible.filter((project) => project !== PROJECTS[0]);
-  const lone = supporting.length === 1 ? supporting[0] : null;
 
   const choose = (index: number) => {
     const apply = () =>
@@ -77,57 +74,66 @@ export function ProjectBrowser({ lang }: { lang: Lang }) {
           {t.status(visible.length)}
         </span>
       </div>
-      <div className="project-grid">
-        {PROJECTS.map((project, index) => (
-          <article
-            key={project.id}
-            className={[
-              "project-card",
-              (index === 0 || project === lone) && "project-featured",
-              revealed && "is-in",
-            ]
-              .filter(Boolean)
-              .join(" ")}
-            data-category={project.category}
-            data-depth={project.depth}
-            hidden={!visible.includes(project)}
-          >
-            <div className={`project-art ${project.art}`}>
-              {project.cover(lang)}
-            </div>
-            <div className="project-body">
-              <div className="project-kicker">
-                <span>{project.kicker}</span>
-              </div>
-              <h3>{project.title[lang]}</h3>
-              <p>{project.description[lang]}</p>
-              <div className="tags">
-                {project.tags.map((tag) => (
-                  <span key={tag}>{tag}</span>
-                ))}
-              </div>
-              {project.links.length > 1 ? (
-                <div className="project-links">
-                  {project.links.map((link, position) => (
-                    <ProjectLink
-                      key={link.href}
-                      label={link.label[lang]}
-                      href={link.href}
-                      secondary={position > 0}
-                    />
-                  ))}
+      {/* A centre line with one dot per project; cards alternate sides by their place among the visible ones. */}
+      <ol className="timeline">
+        {PROJECTS.map((project) => {
+          const place = visible.indexOf(project);
+          return (
+            <li
+              key={project.id}
+              className={[
+                "timeline-item",
+                place % 2 === 1 ? "timeline-right" : "timeline-left",
+                place === visible.length - 1 && "timeline-end",
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              hidden={place === -1}
+            >
+              <span className="timeline-dot" aria-hidden="true" />
+              <p className="timeline-when">
+                <span>{project.period[lang]}</span>
+                <small>{project.kicker}</small>
+              </p>
+              <article
+                className={revealed ? "project-card is-in" : "project-card"}
+                data-category={project.category}
+              >
+                <div className={`project-art ${project.art}`}>
+                  {project.cover(lang)}
                 </div>
-              ) : (
-                <ProjectLink
-                  label={project.links[0].label[lang]}
-                  href={project.links[0].href}
-                  secondary={false}
-                />
-              )}
-            </div>
-          </article>
-        ))}
-      </div>
+                <div className="project-body">
+                  <h3>{project.title[lang]}</h3>
+                  <p>{project.description[lang]}</p>
+                  <div className="tags">
+                    {project.tags.map((tag) => (
+                      <span key={tag}>{tag}</span>
+                    ))}
+                  </div>
+                  {project.links.length > 1 ? (
+                    <div className="project-links">
+                      {project.links.map((link, position) => (
+                        <ProjectLink
+                          key={link.href}
+                          label={link.label[lang]}
+                          href={link.href}
+                          secondary={position > 0}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <ProjectLink
+                      label={project.links[0].label[lang]}
+                      href={project.links[0].href}
+                      secondary={false}
+                    />
+                  )}
+                </div>
+              </article>
+            </li>
+          );
+        })}
+      </ol>
     </>
   );
 }

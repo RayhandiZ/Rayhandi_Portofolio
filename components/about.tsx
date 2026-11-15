@@ -2,9 +2,11 @@ import { Mark } from "@/components/icons";
 import { SplitHeadingText } from "@/components/split-heading";
 import { CONTENT } from "@/lib/content";
 import type { Lang } from "@/lib/i18n";
+import { PROJECTS } from "@/lib/projects";
 
-// Kept from the earlier portfolio; lib/motion.ts counts each number up when it is first seen.
-const STAT_COUNTS = [15, 3, 10];
+// Projects follows the cards in the Work section; the other two are kept from the earlier portfolio.
+// lib/motion.ts counts each number up when it is first seen.
+const STAT_COUNTS = [PROJECTS.length, 3, 10];
 
 export function About({ lang }: { lang: Lang }) {
   const t = CONTENT[lang].about;

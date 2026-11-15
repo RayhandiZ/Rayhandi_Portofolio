@@ -1,3 +1,4 @@
+import { SkillLevels } from "@/components/skill-levels";
 import { SplitHeadingText } from "@/components/split-heading";
 import { CONTENT } from "@/lib/content";
 import type { Lang } from "@/lib/i18n";
@@ -22,15 +23,6 @@ const SKILL_GROUPS = [
     title: "Design & Workflow",
     tools: ["UI/UX Design", "Figma", "Git", "VS Code"],
   },
-];
-
-// Self-assessed percentages kept from the earlier portfolio.
-const SKILL_LEVELS = [
-  { label: "HTML & CSS", level: 70 },
-  { label: "JavaScript", level: 65 },
-  { label: "React", level: 65 },
-  { label: "Google Sheets", level: 75 },
-  { label: "UI/UX Design", level: 70 },
 ];
 
 export function Skills({ lang }: { lang: Lang }) {
@@ -65,18 +57,7 @@ export function Skills({ lang }: { lang: Lang }) {
               </ul>
             </div>
           ))}
-          <div className="skill-levels reveal" id="skillLevels">
-            <h3>{t.levelsTitle}</h3>
-            <p>{t.levelsNote}</p>
-            {SKILL_LEVELS.map(({ label, level }) => (
-              <label key={label}>
-                {label} <span>{level}%</span>
-                <meter min={0} max={100} value={level}>
-                  {level}%
-                </meter>
-              </label>
-            ))}
-          </div>
+          <SkillLevels lang={lang} />
         </div>
       </div>
     </section>
