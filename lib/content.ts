@@ -255,7 +255,7 @@ export const CONTENT: Record<Lang, Content> = {
       tagline: "Ideas, made real.",
       title: {
         lead: "Built with logic",
-        tuck: ".",
+        tuck: ",",
         em: "Designed with feeling.",
         breakBefore: true,
       },

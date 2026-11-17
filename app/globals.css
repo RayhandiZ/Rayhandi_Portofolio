@@ -155,6 +155,15 @@ em {
   font-size: 14px;
   color: var(--muted);
 }
+/* No word left alone on the last line: paragraphs avoid orphans, short labels and card titles balance
+   their lines. Both are hints the browser may ignore, so the natural wrap stays the fallback. */
+p {
+  text-wrap: pretty;
+}
+.small-label,
+.project-body h3 {
+  text-wrap: balance;
+}
 .mark {
   display: block;
   width: 1em;
@@ -306,6 +315,12 @@ h2 em,
     -webkit-mask: none !important;
     mask: none !important;
   }
+  /* ID | EN are 34px tall in the compact phone header: the same look, a 44px touch. */
+  .lang-track .lg-track__item::after {
+    content: "";
+    position: absolute;
+    inset: -5px 0;
+  }
 }
 
 /* Header capsule: a glass host from the library, so the mobile overlay and the buttons inside are not
@@ -354,6 +369,9 @@ h2 em,
   font-weight: 800;
   letter-spacing: 0.02em;
   line-height: 1;
+  /* A 44px target with the same footprint in the layout. */
+  padding: 11px 8px;
+  margin: -11px -8px;
   transition: font-size 0.6s var(--ease);
 }
 .is-scrolled .wordmark {
@@ -1400,7 +1418,7 @@ h2 em {
   display: flex;
   justify-content: space-between;
   margin-top: 8px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--muted);
 }
@@ -1537,6 +1555,8 @@ h2 em {
   display: block;
   font-size: clamp(38px, 4.2vw, 58px);
   font-weight: 800;
+  /* Equal-width digits, so the number does not jostle while it counts up. */
+  font-variant-numeric: tabular-nums;
   line-height: 1.1;
   letter-spacing: -0.04em;
   background: var(--grad-sea);
@@ -1682,6 +1702,7 @@ h2 em {
 .skill-levels label > span {
   float: right;
   color: var(--sea-light);
+  font-variant-numeric: tabular-nums;
 }
 .skill-levels meter {
   display: block;
@@ -1843,7 +1864,7 @@ meter::-moz-meter-bar {
   position: absolute;
   left: 0;
   top: 10px;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--muted);
   pointer-events: none;
   transform-origin: left top;
@@ -1870,17 +1891,20 @@ meter::-moz-meter-bar {
   background: transparent;
   color: var(--text);
   padding: 9px 0;
-  font-size: 15px;
+  /* 16px or more: iOS Safari zooms the page into any field set smaller. */
+  font-size: 16px;
   border-radius: 0;
 }
 .field textarea {
   resize: vertical;
   max-height: 360px;
 }
+/* The focus ring of a field is its underline, drawn 2px thick and in the accent colour. */
 .field input:focus,
 .field textarea:focus {
   outline: 0;
   border-bottom-color: var(--sea-light);
+  box-shadow: 0 1px 0 var(--sea-light);
 }
 .contact-form .button {
   width: 100%;
@@ -1939,6 +1963,8 @@ meter::-moz-meter-bar {
   font-size: 22px;
   font-weight: 800;
   letter-spacing: 0.02em;
+  padding: 4px 8px;
+  margin: -4px -8px;
 }
 .footer > p {
   font-size: 13px;
@@ -2430,8 +2456,16 @@ body:has(.lg-track[data-lifted]) .cursor-ring.is-on {
     font-size: 21vw;
     margin: 4px 0 14px;
   }
-  .hero-statement {
-    font-size: 15px;
+  /* Reading text stays at 16px or more on phones. */
+  .hero-statement,
+  .section-heading > p,
+  .project-body > p,
+  .about-body p,
+  .about-facts dd,
+  .skills-intro > p,
+  .skill-row > p,
+  .contact-copy > p {
+    font-size: 16px;
   }
   .hero-visual {
     width: 100%;
@@ -2486,7 +2520,6 @@ body:has(.lg-track[data-lifted]) .cursor-ring.is-on {
   .section-heading > p {
     margin-top: 18px;
     max-width: 340px;
-    font-size: 14px;
   }
   h2 {
     font-size: 38px;
