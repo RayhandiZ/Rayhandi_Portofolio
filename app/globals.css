@@ -1718,7 +1718,8 @@ h2 em {
 .role .tags {
   margin-block: 18px 0;
 }
-.role-project {
+.role-project,
+.cert-link {
   display: inline-block;
   margin-top: 14px;
   font-size: 14px;
@@ -1732,9 +1733,37 @@ h2 em {
     color 0.3s,
     text-decoration-color 0.3s;
 }
-.role-project:hover {
+.role-project:hover,
+.cert-link:hover {
   color: var(--sea-light);
   text-decoration-color: currentColor;
+}
+/* Someone else's words about the role: the serif of the Skills quote, set behind a rule. */
+.role-reference {
+  margin-top: 22px;
+  padding-left: 18px;
+  border-left: 2px solid var(--sea);
+}
+.role-reference blockquote {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--sea-foam);
+}
+.role-reference figcaption {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.role-reference figcaption strong {
+  font-weight: 600;
+  color: var(--text);
+}
+.role-reference figcaption span {
+  display: block;
 }
 .orgs-title {
   margin-top: 34px;
@@ -1768,6 +1797,9 @@ h2 em {
   margin-top: 6px;
   font-size: 14px;
   color: var(--muted);
+}
+.org .cert-link {
+  margin-top: 6px;
 }
 @media (max-width: 1100px) {
   .experience-layout {
@@ -3050,6 +3082,9 @@ body:has(.lg-track[data-lifted]) .cursor-ring.is-on {
   .project-card {
     break-inside: avoid;
     transform: none;
+  }
+  .role-reference blockquote {
+    color: var(--text);
   }
   .motion * {
     opacity: 1 !important;

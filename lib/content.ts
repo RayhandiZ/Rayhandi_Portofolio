@@ -19,8 +19,8 @@ export interface SplitHeading {
 export interface Content {
   meta: {
     description: string;
-    /** Alt text of the share image (lib/og-image.tsx), given the headline role it shows. */
-    imageAlt: (role: string) => string;
+    /** Alt text of the share image (lib/og-image.tsx). */
+    imageAlt: string;
   };
   skipLink: string;
   nav: {
@@ -67,11 +67,14 @@ export interface Content {
     intro: string;
     cv: string;
     seeProject: (name: string) => string;
+    /** Credits a reference letter quote, given the date on the letter. */
+    reference: (date: string) => string;
     organisations: string;
     education: string;
     gpa: string;
     focus: string;
     certificates: string;
+    viewCertificate: string;
   };
   skills: {
     tagline: string;
@@ -127,7 +130,7 @@ export const CONTENT: Record<Lang, Content> = {
     meta: {
       description:
         "Rayhandi Zulmi — Web Developer, UI/UX Designer & Data Analyst. Project web, dashboard, dan aplikasi yang menghubungkan data dengan pengalaman pengguna.",
-      imageAlt: (role) => `Rayhandi Zulmi, ${role}, berdiri di tepi pantai.`,
+      imageAlt: "Rayhandi Zulmi berdiri di tepi pantai.",
     },
     skipLink: "Lewati ke konten",
     nav: {
@@ -204,11 +207,13 @@ export const CONTENT: Record<Lang, Content> = {
         "Data HR di perusahaan, riset deep learning di kampus, dan kini front-end untuk sistem penilaian softskill seluruh UMN.",
       cv: "Unduh CV (PDF)",
       seeProject: (name) => `Lihat project ${name}`,
+      reference: (date) => `Kutipan surat referensi, ${date}`,
       organisations: "Organisasi",
       education: "Pendidikan",
       gpa: "IPK",
       focus: "Fokus",
-      certificates: "Sertifikasi",
+      certificates: "Sertifikat",
+      viewCertificate: "Lihat sertifikat",
     },
     skills: {
       tagline: "Selalu ada hal baru untuk dipelajari.",
@@ -274,7 +279,7 @@ export const CONTENT: Record<Lang, Content> = {
     meta: {
       description:
         "Rayhandi Zulmi — Web Developer, UI/UX Designer & Data Analyst. Web projects, dashboards, and apps that connect data with the people who use them.",
-      imageAlt: (role) => `Rayhandi Zulmi, ${role}, standing on a beach.`,
+      imageAlt: "Rayhandi Zulmi standing on a beach.",
     },
     skipLink: "Skip to content",
     nav: {
@@ -350,11 +355,13 @@ export const CONTENT: Record<Lang, Content> = {
         "HR data at a company, deep learning research on campus, and now the front end of a softskill system for all of UMN.",
       cv: "Download CV (PDF)",
       seeProject: (name) => `See the ${name} project`,
+      reference: (date) => `From the reference letter, ${date}`,
       organisations: "Organisations",
       education: "Education",
       gpa: "GPA",
       focus: "Focus",
-      certificates: "Certification",
+      certificates: "Certificates",
+      viewCertificate: "View certificate",
     },
     skills: {
       tagline: "There’s always something new to learn.",

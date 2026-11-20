@@ -6,8 +6,8 @@ import type { Lang } from "@/lib/i18n";
 import { PROJECTS } from "@/lib/projects";
 import { CV_PATH } from "@/lib/site";
 
-/** Work, organisations and education from the CV, and the CV itself. It follows About, and the header keeps the
-    About tab lit here instead of growing a tab of its own. */
+/** Work, organisations and education from the CV, the CV itself, a reference letter quote beside its role, and the
+    certificates. It follows About, and the header keeps the About tab lit here instead of growing a tab of its own. */
 export function Experience({ lang }: { lang: Lang }) {
   const t = CONTENT[lang].experience;
   return (
@@ -44,12 +44,6 @@ export function Experience({ lang }: { lang: Lang }) {
                 <dt>{t.focus}</dt>
                 <dd>{EDUCATION.focus[lang]}</dd>
               </div>
-              <div>
-                <dt>{t.certificates}</dt>
-                <dd>
-                  {CERTIFICATES.map(({ name, issuer, year }) => `${name}, ${issuer} (${year})`).join("; ")}
-                </dd>
-              </div>
             </dl>
           </div>
         </div>
@@ -77,6 +71,17 @@ export function Experience({ lang }: { lang: Lang }) {
                       {t.seeProject(project.name[lang])}
                     </a>
                   )}
+                  {role.reference && (
+                    <figure className="role-reference">
+                      <blockquote lang={role.reference.lang}>
+                        <p>“{role.reference.quote}”</p>
+                      </blockquote>
+                      <figcaption>
+                        <strong>{role.reference.name}</strong>, {role.reference.title}
+                        <span>{t.reference(role.reference.date[lang])}</span>
+                      </figcaption>
+                    </figure>
+                  )}
                 </li>
               );
             })}
@@ -91,6 +96,23 @@ export function Experience({ lang }: { lang: Lang }) {
                   <span className="role-when">{item.period[lang]}</span>
                 </div>
                 <p>{item.summary[lang]}</p>
+              </li>
+            ))}
+          </ul>
+          <h3 className="orgs-title reveal">{t.certificates}</h3>
+          <ul className="org-list">
+            {CERTIFICATES.map((cert) => (
+              <li className="org reveal" key={cert.id}>
+                <div className="org-head">
+                  <strong>{cert.name}</strong>
+                  <span>{cert.issuer}</span>
+                  <span className="role-when">{cert.year}</span>
+                </div>
+                <p>{cert.note[lang]}</p>
+                <a className="cert-link" href={cert.file} target="_blank" rel="noopener noreferrer">
+                  {t.viewCertificate}
+                  <span className="sr-only">: {cert.name}</span>
+                </a>
               </li>
             ))}
           </ul>

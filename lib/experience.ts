@@ -1,7 +1,19 @@
-import type { Localized } from "@/lib/i18n";
+import type { Lang, Localized } from "@/lib/i18n";
 
 /* Experience, organisations and education, condensed from the CV in public/cv. Newest first. When the CV changes,
    change this file with it: the page and the PDF should tell the same story. */
+
+/** A line from a reference letter. The letter itself stays off the site; it carries a signature and is shared
+    on request. */
+export interface Reference {
+  /** Word for word, in the letter's own language. */
+  quote: string;
+  lang: Lang;
+  name: string;
+  title: string;
+  /** The date on the letter. */
+  date: Localized;
+}
 
 export interface Role {
   id: string;
@@ -13,6 +25,7 @@ export interface Role {
   tags: string[];
   /** Id of a project card on the timeline that came out of this role. */
   project?: string;
+  reference?: Reference;
 }
 
 export const ROLES: Role[] = [
@@ -38,7 +51,7 @@ export const ROLES: Role[] = [
     id: "link-net",
     period: { id: "Apr – Agu 2026", en: "Apr – Aug 2026" },
     title: { id: "HR Data Analytics Intern", en: "HR Data Analytics Intern" },
-    org: "PT Link Net Tbk",
+    org: "PT Link Net Tbk, Human Capital (Talent Acquisition)",
     points: [
       {
         id: "Membangun dashboard HR real-time di Google Sheets, Looker Studio, dan Streamlit untuk memantau penyelesaian survei, SLA rekrutmen, dan headcount di 4 entitas bisnis, menggantikan laporan manual.",
@@ -50,6 +63,14 @@ export const ROLES: Role[] = [
       },
     ],
     tags: ["Google Sheets", "Looker Studio", "Python", "Streamlit"],
+    reference: {
+      quote:
+        "During his service he has demonstrated excellent manner & responsibility in his assignment to meet the target.",
+      lang: "en",
+      name: "Afrianty Yosevin Sihombing",
+      title: "Talent Acquisition Lead",
+      date: { id: "3 September 2026", en: "3 September 2026" },
+    },
   },
   {
     id: "lppm-umn",
@@ -123,6 +144,38 @@ export const EDUCATION = {
   } as Localized,
 };
 
-export const CERTIFICATES = [
-  { name: "Intro to Programming", issuer: "Onetwocode Indonesia", year: "2022" },
+/* Only certificates that back the work on this page. Each file in public/certificates is the certificate's first
+   page rendered to a 1600px JPEG, because the original PDFs run up to 8.6 MB. Newest first. */
+export interface Certificate {
+  id: string;
+  name: string;
+  issuer: string;
+  year: string;
+  note: Localized;
+  file: string;
+}
+
+export const CERTIFICATES: Certificate[] = [
+  {
+    id: "asean-data-science-explorers",
+    name: "ASEAN Data Science Explorers 2025",
+    issuer: "SAP & ASEAN Foundation",
+    year: "2025",
+    note: {
+      id: "Sertifikat partisipasi sesi pelatihan SAP Analytics Cloud.",
+      en: "Participation certificate for the SAP Analytics Cloud training session.",
+    },
+    file: "/certificates/asean-data-science-explorers-2025.jpg",
+  },
+  {
+    id: "onetwocode",
+    name: "Intro to Programming",
+    issuer: "Onetwocode Indonesia",
+    year: "2022",
+    note: {
+      id: "Kelas dasar pemrograman di Jakarta, 14 Juni – 7 Juli 2022.",
+      en: "An introductory programming course in Jakarta, 14 June – 7 July 2022.",
+    },
+    file: "/certificates/onetwocode-intro-to-programming-2022.jpg",
+  },
 ];

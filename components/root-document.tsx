@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { SvgSprite } from "@/components/icons";
 import { CONTENT } from "@/lib/content";
 import { HOME_PATH, LANGS, type Lang } from "@/lib/i18n";
-import { HEADLINE_ROLE, SITE_NAME, SITE_URL } from "@/lib/site";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 // The glass and smooth-scroll stylesheets come first so the page's own rules can tune them.
 import "@zakisheriff/liquid-glass/styles.css";
 import "lenis/dist/lenis.css";
@@ -31,7 +31,7 @@ const cormorant = localFont({
 const OG_LOCALE: Record<Lang, string> = { id: "id_ID", en: "en_US" };
 
 export function metadataFor(lang: Lang): Metadata {
-  const title = `${SITE_NAME} — ${HEADLINE_ROLE}`;
+  const title = SITE_NAME;
   const { description } = CONTENT[lang].meta;
   return {
     metadataBase: new URL(SITE_URL),

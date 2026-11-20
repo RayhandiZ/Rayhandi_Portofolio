@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { CONTENT } from "@/lib/content";
 import { HOME_PATH, type Lang } from "@/lib/i18n";
-import { HEADLINE_ROLE, SITE_URL } from "@/lib/site";
+import { SITE_URL } from "@/lib/site";
 
 /* The PNG comes out at about 380 KB. Keep it under 600 KB, the size WhatsApp allows for a link preview image
    (older guides say 300 KB); a second photo or a busier background would push it there. */
@@ -29,7 +29,7 @@ const SEA = "#3b97df";
 const SEA_LIGHT = "#8ccfff";
 const SEA_FOAM = "#d4eeff";
 
-/** The share card for one language: the hero's name and the headline role beside the portrait in its arched frame. */
+/** The share card for one language: the hero's greeting and name beside the portrait in its arched frame. */
 export function ogImage(lang: Lang) {
   const url = new URL(HOME_PATH[lang], SITE_URL);
   const address = url.host + (url.pathname === "/" ? "" : url.pathname);
@@ -93,17 +93,6 @@ export function ogImage(lang: Lang) {
               }}
             >
               Zulmi.
-            </div>
-            <div
-              style={{
-                marginTop: 34,
-                fontSize: 32,
-                fontWeight: 600,
-                letterSpacing: "-0.02em",
-                color: WHITE,
-              }}
-            >
-              {HEADLINE_ROLE}
             </div>
           </div>
           <div

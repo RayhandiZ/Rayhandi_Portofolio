@@ -32,9 +32,9 @@ Situs ini statis (halaman `/` di-prerender saat build) dan tidak memerlukan back
 - `components/home.tsx`: urutan section halaman, dipakai kedua bahasa.
 - `app/globals.css`: seluruh styling: warna, tata letak, responsive, dan token `--lg-*` yang menyetel tampilan kaca.
 - `components/`: satu file per bagian (`hero`, `work`, `about`, `experience`, `skills`, `contact`) dan per kontrol (`site-header`, `language-switch`, `project-browser`, `contact-form`, `copy-email`, `local-time`, `to-top`).
-- `lib/content.ts`: semua teks halaman dalam dua bahasa. `lib/projects.tsx`: data project, juga dua bahasa. `lib/site.ts`: alamat dan nama situs, peran utama, email, tautan, dan daftar section navigasi.
+- `lib/content.ts`: semua teks halaman dalam dua bahasa. `lib/projects.tsx`: data project, juga dua bahasa. `lib/site.ts`: alamat dan nama situs, email, tautan, dan daftar section navigasi.
 - `lib/motion.ts`: seluruh motion halaman (lihat di bawah). `lib/smooth-scroll.ts`: scroll halus dengan Lenis (lihat Scroll halus).
-- `lib/experience.ts`: pengalaman kerja, organisasi, pendidikan, dan sertifikasi, diringkas dari CV di `public/cv/`.
+- `lib/experience.ts`: pengalaman kerja, organisasi, pendidikan, kutipan surat referensi, dan sertifikat, diringkas dari CV di `public/cv/`. `public/certificates/`: gambar sertifikat yang ditautkan dari section Pengalaman.
 - `config/liquid-glass-loader.cjs`: dua penyesuaian pada paket kaca saat build (lihat Liquid glass).
 - `public/images/`: foto dan logo asli, plus `rayhandi-og.jpg`, potongan foto untuk gambar preview. `app/fonts/`: font lokal beserta lisensi SIL Open Font License. Cormorant sudah dipangkas ke huruf Latin dalam format WOFF2 (21 KB, dari 95 KB); `app/fonts/og/` berisi salinan TTF untuk gambar preview. Cara membuat keduanya ada di `app/fonts/README.md`.
 
@@ -43,8 +43,10 @@ Situs ini statis (halaman `/` di-prerender saat build) dan tidak memerlukan back
 - **Teks halaman:** `lib/content.ts`, dengan blok `id` dan `en` berdampingan. TypeScript akan menandai jika satu bahasa kekurangan teks. Label yang di versi Indonesia memang sudah berbahasa Inggris ("Selected work", "Let's connect", band disiplin) ditulis langsung di komponennya dan sama di kedua bahasa.
 - **Project:** tambahkan entri pada array `PROJECTS` di `lib/projects.tsx` (kategori, cover, nama pendek, judul, deskripsi, tag, tautan). Nama pendek, judul, deskripsi, dan label tautan diisi `{ id, en }`. Jumlah pada filter dihitung otomatis. Entri pertama selalu menjadi project utama.
 - **Keahlian:** `SKILL_GROUPS` di `components/skills.tsx`, dengan nama file logo dari `public/logos` (alat tanpa logo memakai tanda ✳); ringkasan tiap kelompok ada di `lib/content.ts`. Kalimat "Dipakai di ..." di bawah tiap kelompok dibuat dari tag project: project yang tag-nya menyebut salah satu alat di kelompok itu ikut disebut, dengan nama pendeknya sebagai tautan ke kartunya. Jadi saat menambah project, beri tag yang sama dengan nama alatnya (beda huruf besar-kecil dan akhiran ".js" tidak masalah).
-- **Email, GitHub, LinkedIn, domain, dan peran utama:** `lib/site.ts`. `HEADLINE_ROLE` tampil di judul tab dan di gambar preview.
+- **Email, GitHub, LinkedIn, domain, dan nama situs:** `lib/site.ts`. `SITE_NAME` menjadi judul tab dan nama situs di preview tautan.
 - **Pengalaman dan CV:** `lib/experience.ts` dan `public/cv/CV_Rayhandi_Zulmi.pdf` (alamatnya `CV_PATH` di `lib/site.ts`). Ganti keduanya bersamaan supaya halaman dan PDF bercerita sama. PDF itu memuat nomor telepon dan ikut terpublikasi saat deploy.
+- **Sertifikat:** `CERTIFICATES` di `lib/experience.ts`, terbaru di atas, dengan gambarnya di `public/certificates/`. Gambar itu halaman pertama PDF sertifikat yang dirender ke JPEG selebar 1600 px dengan kualitas 80 (170–290 KB; PDF aslinya sampai 8,6 MB), misalnya dengan PyMuPDF: `page.get_pixmap(matrix=pymupdf.Matrix(z, z)).save("x.jpg", jpg_quality=80)`. Hanya sertifikat yang mendukung isi halaman yang dipasang; dua sertifikat seminar literasi keuangan sengaja tidak.
+- **Kutipan surat referensi:** isian `reference` pada peran di `ROLES`. Kutipannya ditulis kata per kata dalam bahasa suratnya (`lang` menandainya untuk pembaca layar) dan tampil di bawah peran itu. Surat aslinya tidak dipasang karena memuat tanda tangan; bagikan saat diminta.
 - **Status ketersediaan:** `contact.status.value` di `lib/content.ts`. Teks yang sama tampil di pill paling atas hero (tautan ke Kontak) dan di kartu Status, jadi cukup diganti di satu tempat.
 
 ## Arah desain
@@ -92,9 +94,9 @@ Halaman Indonesia ada di `/` dan halaman Inggris di `/en`. Keduanya di-prerender
 
 ## SEO dan preview tautan
 
-- **Judul dan deskripsi:** judulnya "Rayhandi Zulmi — Web Developer & UI/UX Designer", dari `SITE_NAME` dan `HEADLINE_ROLE` di `lib/site.ts`. Deskripsi per bahasa ada di `lib/content.ts`.
+- **Judul dan deskripsi:** judulnya cukup "Rayhandi Zulmi", dari `SITE_NAME` di `lib/site.ts`, tanpa peran. Deskripsi per bahasa ada di `lib/content.ts`.
 - **Open Graph:** `metadataFor` di `components/root-document.tsx` mengisinya, dengan `metadataBase` dari `SITE_URL`. Next.js menyalin judul, deskripsi, dan gambarnya ke kartu Twitter (`summary_large_image`), jadi kartu itu tidak ditulis terpisah.
-- **Gambar preview:** `lib/og-image.tsx` menggambarnya saat build untuk `app/(id)/opengraph-image.tsx` dan `app/(en)/en/opengraph-image.tsx`: 1200×630 px, nama seperti di hero, peran utama, alamat situs, dan foto dalam bingkai melengkung dengan senja seperti di hero. Versi Inggris berada di `app/(en)/en/` karena `app/(en)/opengraph-image` akan memakai alamat yang sama dengan versi Indonesia.
+- **Gambar preview:** `lib/og-image.tsx` menggambarnya saat build untuk `app/(id)/opengraph-image.tsx` dan `app/(en)/en/opengraph-image.tsx`: 1200×630 px, sapaan dan nama seperti di hero, alamat situs, dan foto dalam bingkai melengkung dengan senja seperti di hero. Versi Inggris berada di `app/(en)/en/` karena `app/(en)/opengraph-image` akan memakai alamat yang sama dengan versi Indonesia.
 - **Aset gambar preview:** `next/og` tidak bisa membaca WOFF2, jadi gambarnya memakai salinan TTF di `app/fonts/og/`, ditambah `public/images/rayhandi-og.jpg`, potongan 4:5 dari `rayhandi-pantai.jpeg` (x 592, y 2048, 1212×1516 px, diperkecil ke 480×600). PNG-nya sekitar 380 KB; jaga di bawah 600 KB, batas WhatsApp untuk gambar preview.
 - **robots.txt dan sitemap.xml:** `app/robots.ts` mengizinkan semua crawler dan menunjuk ke sitemap. `app/sitemap.ts` mendaftarkan `/` dan `/en` beserta pasangan bahasanya.
 - **Setelah deploy:** LinkedIn dan WhatsApp menyimpan preview lama untuk tautan yang pernah dibagikan. Di LinkedIn, periksa tautannya lewat [Post Inspector](https://www.linkedin.com/post-inspector/) untuk mengambil preview baru.
@@ -179,6 +181,14 @@ Diperiksa pada build produksi dengan Chrome headless, input roda dan klik sunggu
 - Roda di dalam kolom pesan menggulir kolomnya (200 px), halaman diam. Dengan reduced motion, Lenis tidak aktif.
 - `/cv/CV_Rayhandi_Zulmi.pdf` tersaji sebagai `application/pdf` (147.354 byte, sama dengan file sumber) dan ditautkan dari section Pengalaman dan kartu CV di Kontak.
 - Section Pengalaman di 390, 768, dan 1440 px, di kedua bahasa: tata letak rapi, tanpa horizontal overflow.
+
+### Sertifikat dan surat referensi (November 2026)
+
+Diperiksa pada build produksi dengan Chrome headless:
+
+- Kutipan surat referensi PT Link Net tampil satu kali, di bawah peran HR Data Analytics Intern, bertanda `lang="en"` di kedua versi bahasa, dengan keterangan "Kutipan surat referensi, 3 September 2026" / "From the reference letter, 3 September 2026".
+- Daftar Sertifikat di kolom kanan, setelah Organisasi. Kedua gambar tersaji sebagai `image/jpeg` (170.207 dan 295.191 byte), dibuka di tab baru, dan nama tautannya untuk pembaca layar menyebut sertifikatnya ("Lihat sertifikat: Intro to Programming").
+- Tanpa horizontal overflow di 320, 375, 768, 1024, 1280, 1366, 1440, dan 1920 px di kedua bahasa. Kolom kiri yang sticky (578–600 px) tetap muat di bawah navbar, termasuk di layar 1280×720 (ruang 610 px).
 
 ## Catatan migrasi
 
