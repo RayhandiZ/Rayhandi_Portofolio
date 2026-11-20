@@ -2,6 +2,7 @@
 
 import { useEffect, useLayoutEffect } from "react";
 import { startMotion } from "@/lib/motion";
+import { startSmoothScroll } from "@/lib/smooth-scroll";
 
 declare global {
   interface Window {
@@ -12,7 +13,7 @@ declare global {
   }
 }
 
-/** Runs the page motion when the visitor allows it. Renders nothing. */
+/** Runs the page motion and smooth scrolling when the visitor allows motion. Renders nothing. */
 export function Motion() {
   useLayoutEffect(() => {
     // The boot script set these classes before first paint. React's development remount resets <html> to
@@ -29,7 +30,12 @@ export function Motion() {
 
   useEffect(() => {
     if (!document.documentElement.classList.contains("motion")) return;
-    return startMotion();
+    const stopScroll = startSmoothScroll();
+    const stopMotion = startMotion();
+    return () => {
+      stopMotion();
+      stopScroll();
+    };
   }, []);
 
   return null;

@@ -115,9 +115,12 @@ function animate(
   watch(
     new IntersectionObserver(([entry]) => {
       heroVisible = entry.isIntersecting;
+      // CSS holds the availability pulse while the hero is off screen, as the sea does.
+      hero.classList.toggle("is-offscreen", !heroVisible);
       if (heroVisible) startSea();
     }),
   ).observe(hero);
+  cleanups.push(() => hero.classList.remove("is-offscreen"));
 
   /* Sans-to-serif wipe, built word by word so headings can still wrap. */
   function buildMorph(element: HTMLElement): Morph {
@@ -414,57 +417,6 @@ function animate(
   document
     .querySelectorAll(".reveal, .project-card")
     .forEach((element) => revealObserver.observe(element));
-
-  /* Numbers count up and skill bars fill the first time they are seen. */
-  function playOnce<T extends Element>(
-    elements: T[],
-    threshold: number,
-    play: (element: T) => void,
-  ) {
-    const observer = watch(
-      new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            play(entry.target as T);
-            observer.unobserve(entry.target);
-          });
-        },
-        { threshold },
-      ),
-    );
-    elements.forEach((element) => observer.observe(element));
-  }
-  const counters = [...document.querySelectorAll<HTMLElement>("[data-count]")];
-  counters.forEach((counter) => {
-    keepChildren(counter);
-    counter.textContent = "0";
-  });
-  playOnce(counters, 0.6, (counter) => {
-    const target = Number(counter.dataset.count);
-    tween(1600, (t) => {
-      counter.textContent = String(Math.round(target * t));
-    });
-  });
-  const meters = [
-    ...document.querySelectorAll<HTMLMeterElement>("#skillLevels meter"),
-  ];
-  const meterLevels = new Map(
-    meters.map((meter) => [meter, Number(meter.getAttribute("value"))]),
-  );
-  meters.forEach((meter) => {
-    meter.value = 0;
-  });
-  cleanups.push(() =>
-    meters.forEach((meter) => {
-      meter.value = meterLevels.get(meter) ?? 0;
-    }),
-  );
-  playOnce(meters, 0.4, (meter) => {
-    tween(1400, (t) => {
-      meter.value = (meterLevels.get(meter) ?? 0) * t;
-    });
-  });
 
   /* Tech band: the rows drift on their own in CSS; hold them still while the band is off screen. */
   const techBand = document.querySelector<HTMLElement>(".tech-band");

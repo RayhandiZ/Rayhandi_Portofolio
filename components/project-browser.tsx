@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { flushSync } from "react-dom";
 import { GlassSegmented } from "@zakisheriff/liquid-glass";
 import { Arrow } from "@/components/arrow";
@@ -55,6 +55,22 @@ export function ProjectBrowser({ lang }: { lang: Lang }) {
     else apply();
   };
 
+  // A link to a card (the Skills section names projects) has to find it even while the filter hides it: the
+  // filter goes back to All before the browser follows the link.
+  useEffect(() => {
+    const onClick = (event: MouseEvent) => {
+      const link = (event.target as Element | null)?.closest?.<HTMLAnchorElement>('a[href^="#project-"]');
+      const project = PROJECTS.find((candidate) => link?.hash === `#project-${candidate.id}`);
+      if (!project || matches(FILTERS[selected], project)) return;
+      flushSync(() => {
+        setSelected(0);
+        setRevealed(true);
+      });
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, [selected]);
+
   return (
     <>
       <div className="work-toolbar reveal">
@@ -81,6 +97,7 @@ export function ProjectBrowser({ lang }: { lang: Lang }) {
           return (
             <li
               key={project.id}
+              id={`project-${project.id}`}
               className={[
                 "timeline-item",
                 place % 2 === 1 ? "timeline-right" : "timeline-left",

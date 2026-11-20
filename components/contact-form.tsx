@@ -78,6 +78,7 @@ export function ContactForm({ lang }: { lang: Lang }) {
         </div>
       </div>
       <div className="field">
+        {/* data-lenis-prevent: a long message scrolls inside the field instead of moving the page. */}
         <textarea
           id="fieldMessage"
           name="message"
@@ -85,6 +86,7 @@ export function ContactForm({ lang }: { lang: Lang }) {
           rows={4}
           required
           maxLength={3000}
+          data-lenis-prevent
         />
         <label htmlFor="fieldMessage">{t.message}</label>
       </div>

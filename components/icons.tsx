@@ -49,11 +49,45 @@ export function SvgSprite() {
           d="M12 21.5s7-6.1 7-11.5a7 7 0 1 0-14 0c0 5.4 7 11.5 7 11.5zM12 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"
         />
       </symbol>
+      <symbol id="icon-copy" viewBox="0 0 24 24">
+        <path
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M8.5 8.5h11v11h-11zM15.5 8.5v-4h-11v11h4"
+        />
+      </symbol>
+      <symbol id="icon-file" viewBox="0 0 24 24">
+        <path
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M6.5 3.5h7l4 4v13h-11zM13.5 3.5v4h4M12 10.5v6M9.5 14l2.5 2.5 2.5-2.5"
+        />
+      </symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24">
+        <path
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M5 12.5l4.5 4.5L19 7.5"
+        />
+      </symbol>
     </svg>
   );
 }
 
-export function Icon({ name }: { name: "github" | "linkedin" | "mail" | "pin" }) {
+export function Icon({
+  name,
+}: {
+  name: "github" | "linkedin" | "mail" | "pin" | "copy" | "check" | "file";
+}) {
   return (
     <svg aria-hidden="true">
       <use href={`#icon-${name}`} />

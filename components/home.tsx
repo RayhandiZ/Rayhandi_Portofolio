@@ -1,5 +1,6 @@
 import { About } from "@/components/about";
 import { Contact } from "@/components/contact";
+import { Experience } from "@/components/experience";
 import { GlassTouchScroll } from "@/components/glass-touch-scroll";
 import { Hero } from "@/components/hero";
 import { Motion } from "@/components/motion";
@@ -24,6 +25,7 @@ export function Home({ lang }: { lang: Lang }) {
         <TechBand />
         <Work lang={lang} />
         <About lang={lang} />
+        <Experience lang={lang} />
         <Skills lang={lang} />
         <Contact lang={lang} />
       </main>

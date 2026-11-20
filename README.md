@@ -22,26 +22,30 @@ npm run start
 
 ## Deploy
 
-Situs ini statis (halaman `/` di-prerender saat build) dan tidak memerlukan backend atau environment variable. Di Vercel cukup hubungkan repo ini. `vercel.json` menetapkan framework Next.js, karena project Vercel yang dulu dibuat untuk situs HTML statis memakai preset lain. Jika di pengaturan project Vercel pernah diisi Build Command atau Output Directory secara manual, kosongkan keduanya. Optimasi gambar (`next/image`) berjalan otomatis di Vercel.
+Situs ini statis (halaman `/` di-prerender saat build) dan tidak memerlukan backend atau environment variable. Alamat situs, `SITE_URL` di `lib/site.ts`, dipakai untuk canonical, hreflang, sitemap.xml, robots.txt, dan gambar preview tautan; ganti di sana jika domainnya berubah. Di Vercel cukup hubungkan repo ini. `vercel.json` menetapkan framework Next.js, karena project Vercel yang dulu dibuat untuk situs HTML statis memakai preset lain. Jika di pengaturan project Vercel pernah diisi Build Command atau Output Directory secara manual, kosongkan keduanya. Optimasi gambar (`next/image`) berjalan otomatis di Vercel.
 
 ## Struktur
 
-- `app/(id)/` dan `app/(en)/`: halaman Indonesia di `/` dan halaman Inggris di `/en`, masing-masing dengan root layout sendiri (lihat Bahasa).
+- `app/(id)/` dan `app/(en)/`: halaman Indonesia di `/` dan halaman Inggris di `/en`, masing-masing dengan root layout sendiri (lihat Bahasa) dan `opengraph-image.tsx` di samping halamannya.
+- `app/sitemap.ts` dan `app/robots.ts`: sitemap.xml dan robots.txt. `lib/og-image.tsx`: gambar preview tautan untuk kedua bahasa (lihat SEO dan preview tautan).
 - `components/root-document.tsx`: kerangka HTML bersama, metadata, font lokal (`next/font`), dan skrip kecil yang berjalan sebelum paint pertama.
 - `components/home.tsx`: urutan section halaman, dipakai kedua bahasa.
 - `app/globals.css`: seluruh styling: warna, tata letak, responsive, dan token `--lg-*` yang menyetel tampilan kaca.
-- `components/`: satu file per bagian (`hero`, `work`, `about`, `skills`, `contact`) dan per kontrol (`site-header`, `language-switch`, `project-browser`, `contact-form`, `to-top`).
-- `lib/content.ts`: semua teks halaman dalam dua bahasa. `lib/projects.tsx`: data project, juga dua bahasa. `lib/site.ts`: email, tautan, dan daftar section navigasi.
-- `lib/motion.ts`: seluruh motion halaman (lihat di bawah).
+- `components/`: satu file per bagian (`hero`, `work`, `about`, `experience`, `skills`, `contact`) dan per kontrol (`site-header`, `language-switch`, `project-browser`, `contact-form`, `copy-email`, `local-time`, `to-top`).
+- `lib/content.ts`: semua teks halaman dalam dua bahasa. `lib/projects.tsx`: data project, juga dua bahasa. `lib/site.ts`: alamat dan nama situs, peran utama, email, tautan, dan daftar section navigasi.
+- `lib/motion.ts`: seluruh motion halaman (lihat di bawah). `lib/smooth-scroll.ts`: scroll halus dengan Lenis (lihat Scroll halus).
+- `lib/experience.ts`: pengalaman kerja, organisasi, pendidikan, dan sertifikasi, diringkas dari CV di `public/cv/`.
 - `config/liquid-glass-loader.cjs`: dua penyesuaian pada paket kaca saat build (lihat Liquid glass).
-- `public/images/`: foto dan logo asli. `app/fonts/`: font lokal beserta lisensi SIL Open Font License. Cormorant sudah dipangkas ke huruf Latin dalam format WOFF2 (21 KB, dari 95 KB); cara membuatnya ada di `app/fonts/README.md`.
+- `public/images/`: foto dan logo asli, plus `rayhandi-og.jpg`, potongan foto untuk gambar preview. `app/fonts/`: font lokal beserta lisensi SIL Open Font License. Cormorant sudah dipangkas ke huruf Latin dalam format WOFF2 (21 KB, dari 95 KB); `app/fonts/og/` berisi salinan TTF untuk gambar preview. Cara membuat keduanya ada di `app/fonts/README.md`.
 
 ### Mengubah isi
 
 - **Teks halaman:** `lib/content.ts`, dengan blok `id` dan `en` berdampingan. TypeScript akan menandai jika satu bahasa kekurangan teks. Label yang di versi Indonesia memang sudah berbahasa Inggris ("Selected work", "Let's connect", band disiplin) ditulis langsung di komponennya dan sama di kedua bahasa.
-- **Project:** tambahkan entri pada array `PROJECTS` di `lib/projects.tsx` (kategori, cover, judul, deskripsi, tag, tautan). Judul, deskripsi, dan label tautan diisi `{ id, en }`. Jumlah pada filter dihitung otomatis. Entri pertama selalu menjadi project utama.
-- **Keahlian dan persentase:** `SKILL_GROUPS` dan `SKILL_LEVELS` di `components/skills.tsx`; ringkasan tiap kelompok ada di `lib/content.ts`.
-- **Email, GitHub, LinkedIn:** `lib/site.ts`.
+- **Project:** tambahkan entri pada array `PROJECTS` di `lib/projects.tsx` (kategori, cover, nama pendek, judul, deskripsi, tag, tautan). Nama pendek, judul, deskripsi, dan label tautan diisi `{ id, en }`. Jumlah pada filter dihitung otomatis. Entri pertama selalu menjadi project utama.
+- **Keahlian:** `SKILL_GROUPS` di `components/skills.tsx`, dengan nama file logo dari `public/logos` (alat tanpa logo memakai tanda ✳); ringkasan tiap kelompok ada di `lib/content.ts`. Kalimat "Dipakai di ..." di bawah tiap kelompok dibuat dari tag project: project yang tag-nya menyebut salah satu alat di kelompok itu ikut disebut, dengan nama pendeknya sebagai tautan ke kartunya. Jadi saat menambah project, beri tag yang sama dengan nama alatnya (beda huruf besar-kecil dan akhiran ".js" tidak masalah).
+- **Email, GitHub, LinkedIn, domain, dan peran utama:** `lib/site.ts`. `HEADLINE_ROLE` tampil di judul tab dan di gambar preview.
+- **Pengalaman dan CV:** `lib/experience.ts` dan `public/cv/CV_Rayhandi_Zulmi.pdf` (alamatnya `CV_PATH` di `lib/site.ts`). Ganti keduanya bersamaan supaya halaman dan PDF bercerita sama. PDF itu memuat nomor telepon dan ikut terpublikasi saat deploy.
+- **Status ketersediaan:** `contact.status.value` di `lib/content.ts`. Teks yang sama tampil di pill paling atas hero (tautan ke Kontak) dan di kartu Status, jadi cukup diganti di satu tempat.
 
 ## Arah desain
 
@@ -50,10 +54,10 @@ Gabungan dua versi: atmosfer laut dalam dari [portofolio sebelumnya](https://ray
 - Navy #051221 dan #071a2e, permukaan #0b2339, gradasi laut #d4eeff ke #3b97df, satu warna pasir #e6d3b3 untuk cover DigiTask.
 - Plus Jakarta Sans untuk struktur; Cormorant Garamond italic dengan gradasi laut untuk aksen personal.
 - UMN Softskill sebagai featured project, diikuti HIMSI UMN dan DigiTask.
-- Variasi tata letak: hero penuh dengan nama yang menimpa foto, featured project, dua project pendukung, profil, skill, kontak dengan kartu form.
+- Variasi tata letak: hero penuh dengan nama yang menimpa foto, featured project, dua project pendukung, profil, pengalaman dan pendidikan, skill, kontak dengan kartu form. Section Pengalaman tidak punya tab sendiri; selama dibaca, tab Tentang yang menyala.
 - Responsive, fokus keyboard, skip link, menu mobile, filter dengan status aksesibel, reduced motion, reduced transparency.
 
-Cover project adalah komposisi tipografi dan logo asli, **bukan screenshot antarmuka**. Tidak ditambahkan screenshot, hasil project, atau testimoni fiktif. Angka 15+, 3+, 10+ dan persentase kemampuan dipertahankan dari portofolio awal; bukan hasil verifikasi independen.
+Cover project adalah komposisi tipografi dan logo asli, **bukan screenshot antarmuka**. Tidak ditambahkan screenshot, hasil project, atau testimoni fiktif. Statistik angka (15+, 3+, 10+) dan persentase kemampuan dari portofolio awal sudah dihapus: angkanya tidak terverifikasi, dan persentase hasil penilaian sendiri (misalnya JavaScript 50%) terbaca sebagai "baru setengah bisa".
 
 ## Liquid glass
 
@@ -84,25 +88,46 @@ Halaman Indonesia ada di `/` dan halaman Inggris di `/en`. Keduanya di-prerender
 - **Muat ulang penuh:** tiap bahasa punya root layout sendiri (`app/(id)/layout.tsx` dan `app/(en)/layout.tsx`), jadi pindah bahasa selalu memuat ulang halaman. Itu sengaja: animasi halaman bekerja dengan elemen ber-ID, dan halaman lama yang disimpan tersembunyi oleh navigasi sisi klien akan menggandakan ID-ID itu.
 - **Tanpa JavaScript** switch tampil sebagai dua tautan biasa.
 - Pilihan bahasa tidak diingat: membuka `/` selalu menampilkan versi Indonesia.
-- Tautan `hreflang` antarbahasa belum dipasang karena butuh domain situs yang pasti (`metadataBase`).
+- Kedua halaman memasang canonical dan `hreflang` (`id`, `en`, dan `x-default` ke versi Indonesia), sama dengan pasangan bahasa di sitemap.xml.
+
+## SEO dan preview tautan
+
+- **Judul dan deskripsi:** judulnya "Rayhandi Zulmi — Web Developer & UI/UX Designer", dari `SITE_NAME` dan `HEADLINE_ROLE` di `lib/site.ts`. Deskripsi per bahasa ada di `lib/content.ts`.
+- **Open Graph:** `metadataFor` di `components/root-document.tsx` mengisinya, dengan `metadataBase` dari `SITE_URL`. Next.js menyalin judul, deskripsi, dan gambarnya ke kartu Twitter (`summary_large_image`), jadi kartu itu tidak ditulis terpisah.
+- **Gambar preview:** `lib/og-image.tsx` menggambarnya saat build untuk `app/(id)/opengraph-image.tsx` dan `app/(en)/en/opengraph-image.tsx`: 1200×630 px, nama seperti di hero, peran utama, alamat situs, dan foto dalam bingkai melengkung dengan senja seperti di hero. Versi Inggris berada di `app/(en)/en/` karena `app/(en)/opengraph-image` akan memakai alamat yang sama dengan versi Indonesia.
+- **Aset gambar preview:** `next/og` tidak bisa membaca WOFF2, jadi gambarnya memakai salinan TTF di `app/fonts/og/`, ditambah `public/images/rayhandi-og.jpg`, potongan 4:5 dari `rayhandi-pantai.jpeg` (x 592, y 2048, 1212×1516 px, diperkecil ke 480×600). PNG-nya sekitar 380 KB; jaga di bawah 600 KB, batas WhatsApp untuk gambar preview.
+- **robots.txt dan sitemap.xml:** `app/robots.ts` mengizinkan semua crawler dan menunjuk ke sitemap. `app/sitemap.ts` mendaftarkan `/` dan `/en` beserta pasangan bahasanya.
+- **Setelah deploy:** LinkedIn dan WhatsApp menyimpan preview lama untuk tautan yang pernah dibagikan. Di LinkedIn, periksa tautannya lewat [Post Inspector](https://www.linkedin.com/post-inspector/) untuk mengambil preview baru.
 
 ## Motion
 
-Tanpa library animasi; semuanya di `app/globals.css` dan `lib/motion.ts`, dijalankan oleh `components/motion.tsx`.
+Tanpa library animasi; semuanya di `app/globals.css` dan `lib/motion.ts`, dijalankan oleh `components/motion.tsx`. Satu-satunya library gerak adalah Lenis untuk scroll halus (lihat Scroll halus).
 
 - **Ide utama, sans ke serif:** bagian `em` pada judul berubah dari Plus Jakarta Sans ke Cormorant italic mengikuti scroll, memerankan kalimat "Dibangun dengan logika. Dirancang dengan rasa." Judul skill melakukan hal yang sama saat di-hover.
-- **Laut (berjalan terus selama hero terlihat):** konstelasi partikel yang tertarik ke kursor, cahaya yang mengitari bingkai foto, dan teks peran yang mengetik sendiri. Berhenti saat hero keluar layar atau tab disembunyikan.
-- **Pembuka:** huruf nama naik satu per satu, foto terbuka dari bawah, stiker menempel terakhir. Tanpa preloader yang memblokir.
-- **Scroll:** foto dan nama bergeser halus, tanda ✳ berputar, band disiplin hanya bergerak saat halaman di-scroll, kartu project bergeser berbeda kecepatan, section About dan Kontak melebar sampai penuh, kalimat About menyala kata demi kata, angka statistik menghitung naik, bar skill terisi, nama besar menutup halaman di footer.
+- **Laut (berjalan terus selama hero terlihat):** konstelasi partikel yang tertarik ke kursor, cahaya yang mengitari bingkai foto, teks peran yang mengetik sendiri, dan titik status yang berdenyut di pill ketersediaan. Berhenti saat hero keluar layar atau tab disembunyikan (denyutnya lewat kelas `is-offscreen` pada hero).
+- **Pembuka:** pill ketersediaan muncul lebih dulu, huruf nama naik satu per satu, foto terbuka dari bawah, stiker menempel terakhir. Tanpa preloader yang memblokir.
+- **Scroll:** foto dan nama bergeser halus, tanda ✳ berputar, band disiplin hanya bergerak saat halaman di-scroll, kartu project bergeser berbeda kecepatan, section About dan Kontak melebar sampai penuh, kalimat About menyala kata demi kata, nama besar menutup halaman di footer.
 - **Pointer dan aksi:** kartu project miring 3D dan isinya mengikuti pointer, sudut cover melengkung, cincin mengikuti kursor (kursor asli tetap ada), navbar mengecil saat di-scroll dan kembali normal di paling atas, garis tautan tergambar, panah bertukar saat di-hover, label form mengambang, filter memakai View Transitions.
 
 React merender markup-nya; `lib/motion.ts` hanya menganimasikannya. Saat harus menyusun ulang teks (wipe serif, nama yang dipecah per huruf, kalimat yang menyala), modul ini menyimpan node asli dan mengembalikannya saat cleanup.
 
 Dengan `prefers-reduced-motion` atau tanpa JavaScript, semua konten tampil dalam kondisi akhir dan diam, dan navigasi memakai tautan biasa. Jika JavaScript gagal dimuat, skrip di `components/root-document.tsx` mengembalikan halaman ke kondisi itu setelah enam detik.
 
+## Scroll halus
+
+Roda mouse dan tautan di dalam halaman digulir dengan [Lenis](https://github.com/darkroomengineering/lenis) 1.3.27 (`lib/smooth-scroll.ts`), library yang juga dipakai situs referensi. Sentuhan di HP tetap memakai scroll bawaan browser.
+
+- **Rasa:** `lerp: 0.08`. Satu putaran roda menempuh setengah jarak dalam sekitar 0,17 detik dan 90% dalam sekitar 0,5 detik, sama dengan kurva yang diukur di situs referensi.
+- **Hanya bersama motion:** Lenis dinyalakan `components/motion.tsx` saat kelas `motion` aktif. Dengan `prefers-reduced-motion`, tanpa JavaScript, atau setelah fallback enam detik, scroll tetap bawaan browser.
+- **Tautan dan tab:** tautan `#section` diambil alih Lenis (`anchors: true`) dan berhenti di bawah navbar karena Lenis membaca `scroll-padding-top`. Tab navbar memakai `scrollToSection()`. Selama perjalanan, pilihan tab tetap tertahan di tujuan: `scrollend` diabaikan selama Lenis masih menggulir menuju target.
+- **Posisi scroll asli:** Lenis menggulir window itu sendiri (dengan `behavior: "instant"`), jadi `lib/motion.ts`, scroll spy, dan liquid glass tetap membaca `scrollY` seperti biasa. `scroll-behavior: smooth` di CSS tetap ada untuk mode tanpa Lenis.
+- **Kolom pesan** di form memakai `data-lenis-prevent`, jadi pesan panjang di-scroll di dalam kolomnya, bukan menggeser halaman.
+
 ## Kontak: penting
 
-Tombol **Buka aplikasi email** membuat URL `mailto:` dengan nama, email, dan pesan yang di-encode. Pengunjung tetap harus menekan Kirim di aplikasi email mereka. **Tidak ada backend atau pengiriman langsung dari website.** Jika aplikasi email default belum dikonfigurasi, gunakan alamat email yang ditampilkan.
+Tombol **Buka aplikasi email** membuat URL `mailto:` dengan nama, email, dan pesan yang di-encode. Pengunjung tetap harus menekan Kirim di aplikasi email mereka. **Tidak ada backend atau pengiriman langsung dari website.** Jika aplikasi email default belum dikonfigurasi, pengunjung bisa menekan tombol **Salin** di kartu Email (`components/copy-email.tsx`). Tombol itu muncul setelah JavaScript berjalan dan hanya jika browser menyediakan clipboard; di kolom sempit ia hanya menampilkan ikon. Seluruh kartu Email tetap membuka `mailto:`.
+
+Di bawah lokasi ada jam setempat (WIB, `components/local-time.tsx`), diperbarui tiap menit. HTML hasil prerender mengosongkan baris itu, jadi halaman statis tidak pernah menampilkan jam yang basi.
 
 ## Verifikasi
 
@@ -121,6 +146,39 @@ Dilakukan pada build produksi (`next build` lalu `next start`) dengan Chrome hea
 - **Axe-core 4.10.3**, rule tags WCAG 2 A/AA dan WCAG 2.1 AA: 0 pelanggaran otomatis pada 390 dan 1440 px di kedua bahasa dalam kondisi akhir, dengan 1 pemeriksaan kontras yang memerlukan peninjauan manual per ukuran, sama seperti versi sebelum migrasi. Bukan sertifikasi aksesibilitas lengkap.
 
 Belum diuji: Safari, Firefox, dan perangkat fisik. Kehalusan gerakan dan performa di perangkat nyata dinilai dari frame statis saja. Ketersediaan tautan eksternal tidak diverifikasi.
+
+### SEO dan pembersihan (November 2026)
+
+Diperiksa pada build produksi:
+
+- `next build`, `tsc --noEmit`, dan ESLint tanpa error atau peringatan. Semua route statis, termasuk kedua gambar preview, robots.txt, dan sitemap.xml.
+- `<head>` di `/` dan `/en`: judul, deskripsi per bahasa, canonical, hreflang `id`/`en`/`x-default`, Open Graph dengan `og:locale` dan `og:locale:alternate`, kartu Twitter `summary_large_image`, dan URL gambar absolut ke `rayhandi-portofolio.vercel.app`.
+- Kedua gambar preview diperiksa langsung: teks sesuai bahasanya, apostrof melengkung di "Hi, I’m", tidak ada glyph yang hilang.
+- Section Tentang dan Keahlian di lebar 1440 dan 390 px dengan reduced motion: tata letak tetap rapi setelah statistik dan bar skill dihapus, tanpa horizontal overflow.
+- Keahlian versi baru (logo di chip, kalimat "Dipakai di" / "Used in") di kedua bahasa pada 1440 dan 390 px. Logo MySQL yang ditebalkan dicek di chip 16 px dan di tech band 32 px.
+- Tautan ke kartu project saat filter menyembunyikannya: filter Data dipilih, lalu tautan DigiTask di Keahlian diklik dengan mouse. Filter kembali ke Semua, kartu tampil 96 px dari atas (di bawah navbar), dan alamat menjadi `#project-digitask`.
+
+Belum diuji: preview sungguhan di LinkedIn dan WhatsApp (butuh deploy). Axe-core belum dijalankan ulang.
+
+### Status, jam lokal, dan salin email (November 2026)
+
+Ditambahkan setelah membandingkan dengan shot portofolio populer di Dribbble (status "available for work" yang terlihat sejak awal, jam lokal di header). Liquid glass tidak diubah. Diperiksa pada build produksi dengan Chrome headless dan mouse sungguhan:
+
+- Pill status di hero tampil setelah pembuka, menautkan ke `#kontak`, dan membawa Kontak tepat di bawah navbar (96 px). Pembaca layar mendengar "Tersedia untuk freelance, hubungi saya".
+- Denyut titik status berjalan saat hero terlihat dan berhenti (`paused`) saat hero di luar layar.
+- Jam lokal tampil sebagai "Sekarang pukul 11.15 WIB" dan "It’s 11:15 AM here (UTC+7)".
+- Tombol salin mengisi clipboard dengan alamat email, berubah menjadi "Tersalin" / "Copied", diumumkan lewat `role="status"`, lalu kembali ke label awal setelah sekitar 2,4 detik.
+- Kartu Kontak di 320, 360, 390, 768, dan 1440 px: alamat email satu baris mulai sekitar 325 px, dan di bawahnya terpotong setelah "@". Tidak ada horizontal overflow di 320, 375, 414, 768, 1024, 1280, 1440, dan 1920 px di kedua bahasa.
+
+### Scroll halus, pengalaman, dan CV (November 2026)
+
+Diperiksa pada build produksi dengan Chrome headless, input roda dan klik sungguhan, dan posisi scroll dicatat tiap frame:
+
+- Satu putaran roda (300 px): 50% dalam 170 ms, 90% dalam 503 ms (situs referensi: 184 ms dan 500 ms), langkah terbesar per frame 23 px, tanpa balik arah.
+- Tombol Jelajahi project, tab Keahlian (7.416 px), dan tautan DigiTask dari Keahlian saat filter Data aktif: semua bergerak tanpa balik arah, berhenti 96 px dari atas, dan memperbarui alamat. Tab navbar langsung berpindah dari Beranda ke Keahlian tanpa mampir di tab lain.
+- Roda di dalam kolom pesan menggulir kolomnya (200 px), halaman diam. Dengan reduced motion, Lenis tidak aktif.
+- `/cv/CV_Rayhandi_Zulmi.pdf` tersaji sebagai `application/pdf` (147.354 byte, sama dengan file sumber) dan ditautkan dari section Pengalaman dan kartu CV di Kontak.
+- Section Pengalaman di 390, 768, dan 1440 px, di kedua bahasa: tata letak rapi, tanpa horizontal overflow.
 
 ## Catatan migrasi
 

@@ -7,6 +7,7 @@ import { CONTENT } from "@/lib/content";
 import { useScrolledPast } from "@/lib/hooks";
 import type { Lang } from "@/lib/i18n";
 import { CONTACT_SECTION, NAV_SECTIONS } from "@/lib/site";
+import { isEasing, scrollToSection } from "@/lib/smooth-scroll";
 
 const MOBILE_NAV = "(max-width: 900px)";
 const SPY_SECTIONS: string[] = [...NAV_SECTIONS, CONTACT_SECTION];
@@ -88,7 +89,11 @@ export function SiteHeader({ lang }: { lang: Lang }) {
   // A pinned choice lets go once the page arrives, the visitor scrolls by hand, or time runs out.
   useEffect(() => {
     if (!nav.pinned) return;
-    const release = () => dispatch({ type: "release" });
+    const release = (event?: Event) => {
+      // Smooth scrolling can end a scroll on every eased frame; only arriving or the visitor's own scrolling counts.
+      if (event?.type === "scrollend" && isEasing()) return;
+      dispatch({ type: "release" });
+    };
     const timer = window.setTimeout(release, 2200);
     const events = ["wheel", "touchmove", "scrollend"] as const;
     events.forEach((name) =>
@@ -135,7 +140,8 @@ export function SiteHeader({ lang }: { lang: Lang }) {
   const travel = (index: number) => {
     const id = NAV_SECTIONS[index];
     dispatch({ type: "go", id });
-    document.getElementById(id)?.scrollIntoView();
+    const section = document.getElementById(id);
+    if (section) scrollToSection(section);
     if (window.location.hash !== `#${id}`)
       window.history.pushState(null, "", `#${id}`);
   };

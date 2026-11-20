@@ -17,7 +17,11 @@ export interface SplitHeading {
 }
 
 export interface Content {
-  meta: { description: string };
+  meta: {
+    description: string;
+    /** Alt text of the share image (lib/og-image.tsx), given the headline role it shows. */
+    imageAlt: (role: string) => string;
+  };
   skipLink: string;
   nav: {
     sections: Record<NavSectionId, string>;
@@ -37,6 +41,8 @@ export interface Content {
     meet: string;
     portraitAlt: string;
     note: { lead: string; em: string };
+    /** Read by screen readers after the availability status, which links to the contact section. */
+    statusAction: string;
   };
   work: {
     tagline: string;
@@ -53,7 +59,19 @@ export interface Content {
     lead: string;
     body: [string, string];
     facts: Array<{ term: string; detail: string }>;
-    stats: [string, string, string];
+  };
+  /** Labels of the Experience section; the roles themselves live in lib/experience.ts. */
+  experience: {
+    tagline: string;
+    title: SplitHeading;
+    intro: string;
+    cv: string;
+    seeProject: (name: string) => string;
+    organisations: string;
+    education: string;
+    gpa: string;
+    focus: string;
+    certificates: string;
   };
   skills: {
     tagline: string;
@@ -61,17 +79,30 @@ export interface Content {
     intro: string;
     quote: string;
     summaries: [string, string, string];
-    levelsTitle: string;
-    levelsNote: string;
-    showMore: string;
-    showLess: string;
+    /** Leads the sentence that names the projects using a group's tools. */
+    usedIn: string;
   };
   contact: {
     tagline: string;
     title: SplitHeading;
     intro: string;
-    location: { label: string; value: string };
+    location: {
+      label: string;
+      value: string;
+      /** The current time there, given as formatted by components/local-time.tsx. */
+      time: (time: string) => string;
+    };
     status: { label: string; value: string };
+    cv: { label: string; value: string };
+    /** The copy button on the email card; `copied` and `notCopied` are announced to screen readers. */
+    copy: {
+      label: string;
+      done: string;
+      failed: string;
+      action: string;
+      copied: string;
+      notCopied: string;
+    };
     form: {
       title: { lead: string; tuck: string };
       name: string;
@@ -96,6 +127,7 @@ export const CONTENT: Record<Lang, Content> = {
     meta: {
       description:
         "Rayhandi Zulmi — Web Developer, UI/UX Designer & Data Analyst. Project web, dashboard, dan aplikasi yang menghubungkan data dengan pengalaman pengguna.",
+      imageAlt: (role) => `Rayhandi Zulmi, ${role}, berdiri di tepi pantai.`,
     },
     skipLink: "Lewati ke konten",
     nav: {
@@ -127,6 +159,7 @@ export const CONTENT: Record<Lang, Content> = {
       meet: "Kenali saya",
       portraitAlt: "Rayhandi Zulmi berdiri di tepi pantai",
       note: { lead: "Logika yang terstruktur.", em: "Sentuhan yang personal." },
+      statusAction: "hubungi saya",
     },
     work: {
       tagline: "Ide menjadi sesuatu yang nyata.",
@@ -163,7 +196,19 @@ export const CONTENT: Record<Lang, Content> = {
           detail: "Front-end Developer Intern di Universitas Multimedia Nusantara",
         },
       ],
-      stats: ["Project selesai", "Tahun berkarya", "Teknologi"],
+    },
+    experience: {
+      tagline: "Tiga magang sepanjang 2026.",
+      title: { lead: "Teori bertemu", em: "praktik." },
+      intro:
+        "Data HR di perusahaan, riset deep learning di kampus, dan kini front-end untuk sistem penilaian softskill seluruh UMN.",
+      cv: "Unduh CV (PDF)",
+      seeProject: (name) => `Lihat project ${name}`,
+      organisations: "Organisasi",
+      education: "Pendidikan",
+      gpa: "IPK",
+      focus: "Fokus",
+      certificates: "Sertifikasi",
     },
     skills: {
       tagline: "Selalu ada hal baru untuk dipelajari.",
@@ -182,18 +227,28 @@ export const CONTENT: Record<Lang, Content> = {
         "Dari pengolahan data ke dashboard real-time.",
         "Detail visual dan alur kerja yang terstruktur.",
       ],
-      levelsTitle: "Penilaian kemampuan pribadi",
-      levelsNote: "Penilaian mandiri dari portofolio awal.",
-      showMore: "Lihat lebih lanjut",
-      showLess: "Tampilkan lebih sedikit",
+      usedIn: "Dipakai di",
     },
     contact: {
       tagline: "Punya project, ide, atau peluang kolaborasi?",
       title: { lead: "Ide bagus dimulai dari", em: "percakapan." },
       intro:
         "Saya selalu terbuka untuk diskusi, kolaborasi, maupun peluang baru. Saya ingin mendengar idemu.",
-      location: { label: "Lokasi", value: "Kab. Tangerang, Indonesia" },
+      location: {
+        label: "Lokasi",
+        value: "Kab. Tangerang, Indonesia",
+        time: (time) => `Sekarang pukul ${time} WIB`,
+      },
       status: { label: "Status", value: "Tersedia untuk freelance" },
+      cv: { label: "CV", value: "Unduh PDF, 2 halaman" },
+      copy: {
+        label: "Salin",
+        done: "Tersalin",
+        failed: "Gagal",
+        action: "Salin alamat email",
+        copied: "Alamat email tersalin.",
+        notCopied: "Alamat email gagal disalin.",
+      },
       form: {
         title: { lead: "Mari mulai sesuatu", tuck: "." },
         name: "Nama",
@@ -219,6 +274,7 @@ export const CONTENT: Record<Lang, Content> = {
     meta: {
       description:
         "Rayhandi Zulmi — Web Developer, UI/UX Designer & Data Analyst. Web projects, dashboards, and apps that connect data with the people who use them.",
+      imageAlt: (role) => `Rayhandi Zulmi, ${role}, standing on a beach.`,
     },
     skipLink: "Skip to content",
     nav: {
@@ -250,6 +306,7 @@ export const CONTENT: Record<Lang, Content> = {
       meet: "Get to know me",
       portraitAlt: "Rayhandi Zulmi standing on a beach",
       note: { lead: "Structured logic.", em: "A personal touch." },
+      statusAction: "get in touch",
     },
     work: {
       tagline: "Ideas, made real.",
@@ -285,7 +342,19 @@ export const CONTENT: Record<Lang, Content> = {
           detail: "Front-end Developer Intern at Universitas Multimedia Nusantara",
         },
       ],
-      stats: ["Projects completed", "Years of building", "Technologies"],
+    },
+    experience: {
+      tagline: "Three internships in 2026.",
+      title: { lead: "Where theory meets", em: "practice." },
+      intro:
+        "HR data at a company, deep learning research on campus, and now the front end of a softskill system for all of UMN.",
+      cv: "Download CV (PDF)",
+      seeProject: (name) => `See the ${name} project`,
+      organisations: "Organisations",
+      education: "Education",
+      gpa: "GPA",
+      focus: "Focus",
+      certificates: "Certification",
     },
     skills: {
       tagline: "There’s always something new to learn.",
@@ -304,18 +373,28 @@ export const CONTENT: Record<Lang, Content> = {
         "From data processing to real-time dashboards.",
         "Visual detail and a structured workflow.",
       ],
-      levelsTitle: "Self-assessed skill levels",
-      levelsNote: "Self-assessment carried over from the first portfolio.",
-      showMore: "Show more",
-      showLess: "Show less",
+      usedIn: "Used in",
     },
     contact: {
       tagline: "Have a project, an idea, or a chance to collaborate?",
       title: { lead: "Good ideas start with a", em: "conversation." },
       intro:
         "I’m always open to discussions, collaborations, and new opportunities. I’d love to hear your idea.",
-      location: { label: "Location", value: "Tangerang Regency, Indonesia" },
+      location: {
+        label: "Location",
+        value: "Tangerang Regency, Indonesia",
+        time: (time) => `It’s ${time} here (UTC+7)`,
+      },
       status: { label: "Status", value: "Available for freelance work" },
+      cv: { label: "CV", value: "Download the PDF, 2 pages" },
+      copy: {
+        label: "Copy",
+        done: "Copied",
+        failed: "Failed",
+        action: "Copy email address",
+        copied: "Email address copied.",
+        notCopied: "Couldn’t copy the email address.",
+      },
       form: {
         title: { lead: "Let’s start something", tuck: "." },
         name: "Name",

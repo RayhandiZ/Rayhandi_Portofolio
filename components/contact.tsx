@@ -1,14 +1,18 @@
 import { ContactForm } from "@/components/contact-form";
+import { CopyEmail } from "@/components/copy-email";
 import { CurrentYear } from "@/components/current-year";
 import { Icon } from "@/components/icons";
+import { LocalTime } from "@/components/local-time";
 import { SplitHeadingText } from "@/components/split-heading";
 import { CONTENT } from "@/lib/content";
 import type { Lang } from "@/lib/i18n";
-import { EMAIL, GITHUB_URL, LINKEDIN_URL } from "@/lib/site";
+import { CV_PATH, EMAIL, GITHUB_URL, LINKEDIN_URL } from "@/lib/site";
 
 /** The closing section: contact details, the form, and the footer inside the same unfolding panel. */
 export function Contact({ lang }: { lang: Lang }) {
   const t = CONTENT[lang].contact;
+  // On a narrow card the address may break, and only after the @.
+  const [mailbox, domain] = EMAIL.split("@");
   return (
     <section
       className="contact-section section unfold"
@@ -27,13 +31,27 @@ export function Contact({ lang }: { lang: Lang }) {
             </h2>
             <p className="reveal">{t.intro}</p>
             <div className="contact-cards reveal">
-              <a className="contact-card" href={`mailto:${EMAIL}`}>
+              {/* The address link covers the whole card; the copy button sits above it. */}
+              <div className="contact-card">
                 <span className="contact-icon">
                   <Icon name="mail" />
                 </span>
                 <span>
                   <strong>Email</strong>
-                  <span>{EMAIL}</span>
+                  <a className="contact-link" href={`mailto:${EMAIL}`}>
+                    {mailbox}@<wbr />
+                    {domain}
+                  </a>
+                </span>
+                <CopyEmail lang={lang} />
+              </div>
+              <a className="contact-card" href={CV_PATH} download>
+                <span className="contact-icon">
+                  <Icon name="file" />
+                </span>
+                <span>
+                  <strong>{t.cv.label}</strong>
+                  <span>{t.cv.value}</span>
                 </span>
               </a>
               <div className="contact-card">
@@ -43,6 +61,7 @@ export function Contact({ lang }: { lang: Lang }) {
                 <span>
                   <strong>{t.location.label}</strong>
                   <span>{t.location.value}</span>
+                  <LocalTime lang={lang} />
                 </span>
               </div>
               <div className="contact-card">

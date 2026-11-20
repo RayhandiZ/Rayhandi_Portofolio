@@ -4,7 +4,7 @@ import { Arrow } from "@/components/arrow";
 import { Icon, Mark } from "@/components/icons";
 import { CONTENT } from "@/lib/content";
 import type { Lang } from "@/lib/i18n";
-import { EMAIL, GITHUB_URL, LINKEDIN_URL } from "@/lib/site";
+import { CONTACT_SECTION, EMAIL, GITHUB_URL, LINKEDIN_URL } from "@/lib/site";
 import portrait from "@/public/images/rayhandi-pantai.jpeg";
 
 export function Hero({ lang }: { lang: Lang }) {
@@ -14,6 +14,12 @@ export function Hero({ lang }: { lang: Lang }) {
       <canvas className="hero-canvas" id="heroCanvas" aria-hidden="true" />
       <div className="hero container">
         <div className="hero-copy">
+          {/* Availability up front, as the contact section states it; it leads there. */}
+          <a className="hero-status" href={`#${CONTACT_SECTION}`}>
+            <span className="status-dot" aria-hidden="true" />
+            {CONTENT[lang].contact.status.value}
+            <span className="sr-only">, {t.statusAction}</span>
+          </a>
           <p className="eyebrow">{t.eyebrow}</p>
           <h1 id="hero-title">
             <span className="name-line">

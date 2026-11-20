@@ -18,6 +18,8 @@ export interface Project {
   /** Cover content: a composition of type and the real logo, not a screenshot. */
   cover: (lang: Lang) => ReactNode;
   kicker: string;
+  /** Short name, for sentences that mention the project (the Skills section's "Used in ..."). */
+  name: Localized;
   title: Localized;
   description: Localized;
   tags: string[];
@@ -74,6 +76,7 @@ export const PROJECTS: Project[] = [
       </>
     ),
     kicker: "Web development",
+    name: { id: "UMN Softskill", en: "UMN Softskill" },
     title: {
       id: "Website UMN Softskill (VIBE)",
       en: "UMN Softskill Website (VIBE)",
@@ -120,6 +123,7 @@ export const PROJECTS: Project[] = [
       </>
     ),
     kicker: "App development",
+    name: { id: "DigiTask", en: "DigiTask" },
     title: { id: "Aplikasi DigiTask", en: "DigiTask App" },
     description: {
       id: "Aplikasi untuk membantu freelancer mengelola tugas dan proyek secara efisien.",
@@ -160,6 +164,7 @@ export const PROJECTS: Project[] = [
       </>
     ),
     kicker: "Web development",
+    name: { id: "HIMSI UMN", en: "HIMSI UMN" },
     title: { id: "Website HIMSI UMN", en: "HIMSI UMN Website" },
     description: {
       id: "Ruang digital organisasi mahasiswa untuk berbagi informasi, event, dan komunikasi.",
@@ -230,6 +235,7 @@ export const PROJECTS: Project[] = [
       </>
     ),
     kicker: "Big Data Analytics",
+    name: { id: "Early Warning System IPK", en: "GPA Early Warning System" },
     title: {
       id: "Early Warning System Prediksi IPK",
       en: "GPA Early Warning System",

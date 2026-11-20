@@ -3,9 +3,11 @@ import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import { SvgSprite } from "@/components/icons";
 import { CONTENT } from "@/lib/content";
-import type { Lang } from "@/lib/i18n";
-// The glass stylesheet comes first so the page's own rules can tune it.
+import { HOME_PATH, LANGS, type Lang } from "@/lib/i18n";
+import { HEADLINE_ROLE, SITE_NAME, SITE_URL } from "@/lib/site";
+// The glass and smooth-scroll stylesheets come first so the page's own rules can tune them.
 import "@zakisheriff/liquid-glass/styles.css";
+import "lenis/dist/lenis.css";
 import "@/app/globals.css";
 
 const jakarta = localFont({
@@ -26,10 +28,30 @@ const cormorant = localFont({
   adjustFontFallback: "Times New Roman",
 });
 
+const OG_LOCALE: Record<Lang, string> = { id: "id_ID", en: "en_US" };
+
 export function metadataFor(lang: Lang): Metadata {
+  const title = `${SITE_NAME} — ${HEADLINE_ROLE}`;
+  const { description } = CONTENT[lang].meta;
   return {
-    title: "Rayhandi Zulmi",
-    description: CONTENT[lang].meta.description,
+    metadataBase: new URL(SITE_URL),
+    title,
+    description,
+    alternates: {
+      canonical: HOME_PATH[lang],
+      languages: { id: HOME_PATH.id, en: HOME_PATH.en, "x-default": HOME_PATH.id },
+    },
+    // The image comes from the opengraph-image.tsx beside each page. Next.js fills the Twitter card
+    // (summary_large_image, title, description, image) from these fields.
+    openGraph: {
+      type: "website",
+      siteName: SITE_NAME,
+      url: HOME_PATH[lang],
+      title,
+      description,
+      locale: OG_LOCALE[lang],
+      alternateLocale: LANGS.filter((other) => other !== lang).map((other) => OG_LOCALE[other]),
+    },
   };
 }
 
