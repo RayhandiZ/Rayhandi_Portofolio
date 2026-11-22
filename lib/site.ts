@@ -4,7 +4,8 @@ export const SITE_URL = "https://rayhandi-portofolio.vercel.app";
 /** The page title, the Open Graph site name, and the name on the share image, in both languages. */
 export const SITE_NAME = "Rayhandi Zulmi";
 
-/** The CV in public/cv, linked from the Experience section and the contact cards. lib/experience.ts follows it. */
+/** The CV in public/cv, linked from the header on wide screens, the Experience section on phones, and the contact
+    cards. lib/experience.ts follows it. */
 export const CV_PATH = "/cv/CV_Rayhandi_Zulmi.pdf";
 
 export const EMAIL = "rayhandizulmi@gmail.com";

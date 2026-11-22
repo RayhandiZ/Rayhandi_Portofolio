@@ -2,11 +2,12 @@
 
 import { useEffect, useReducer, useRef, useState } from "react";
 import { GlassButton, GlassNav, useRefraction } from "@zakisheriff/liquid-glass";
+import { Arrow } from "@/components/arrow";
 import { LanguageSwitch } from "@/components/language-switch";
 import { CONTENT } from "@/lib/content";
 import { useScrolledPast } from "@/lib/hooks";
 import type { Lang } from "@/lib/i18n";
-import { CONTACT_SECTION, NAV_SECTIONS } from "@/lib/site";
+import { CONTACT_SECTION, CV_PATH, NAV_SECTIONS } from "@/lib/site";
 import { isEasing, scrollToSection } from "@/lib/smooth-scroll";
 
 const MOBILE_NAV = "(max-width: 900px)";
@@ -52,6 +53,7 @@ function navReducer(state: NavState, action: NavAction): NavState {
 
 export function SiteHeader({ lang }: { lang: Lang }) {
   const t = CONTENT[lang].nav;
+  const cv = CONTENT[lang].experience.cv;
   const bar = useRef<HTMLDivElement>(null);
   const progress = useRef<HTMLSpanElement>(null);
   const firstLink = useRef<HTMLAnchorElement>(null);
@@ -193,6 +195,10 @@ export function SiteHeader({ lang }: { lang: Lang }) {
                 </a>
               ))}
             </div>
+            {/* Wide screens only: phones get the CV link in the Experience section instead. */}
+            <a className="nav-cv" href={CV_PATH} download aria-label={cv} title={cv}>
+              CV <Arrow glyph="↓" />
+            </a>
             <GlassButton
               href={`#${CONTACT_SECTION}`}
               variant="clear"

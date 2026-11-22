@@ -182,6 +182,15 @@ Diperiksa pada build produksi dengan Chrome headless, input roda dan klik sunggu
 - `/cv/CV_Rayhandi_Zulmi.pdf` tersaji sebagai `application/pdf` (147.354 byte, sama dengan file sumber) dan ditautkan dari section Pengalaman dan kartu CV di Kontak.
 - Section Pengalaman di 390, 768, dan 1440 px, di kedua bahasa: tata letak rapi, tanpa horizontal overflow.
 
+### Tombol CV di navbar (November 2026)
+
+Di atas 900 px, tautan unduh CV pindah dari section Pengalaman ke navbar sebagai tombol "CV ↓" di samping Mari berdiskusi (`.nav-cv`). Di 900 px ke bawah navbar tidak memuatnya dan tautan "Unduh CV (PDF)" tetap di section Pengalaman. Diperiksa dengan Chrome headless:
+
+- `next build`, `tsc --noEmit`, dan ESLint tanpa error.
+- Lebar 320, 390, 768, 900, 901, 1024, 1100, 1101, 1280, 1440, dan 1920 px di kedua bahasa: tidak ada horizontal overflow, dan tombol di navbar tidak saling menimpa. Paling sempit di 901 px (bahasa Indonesia, sudah di-scroll): sekitar 36 px antara tab Keahlian dan tombol CV.
+- Tanpa JavaScript di 901 dan 1280 px: tombol CV tampil di samping tautan biasa.
+- Nama tombol untuk pembaca layar: "Unduh CV (PDF)" / "Download CV (PDF)". Teks yang sama muncul sebagai tooltip.
+
 ### Sertifikat dan surat referensi (November 2026)
 
 Diperiksa pada build produksi dengan Chrome headless:
