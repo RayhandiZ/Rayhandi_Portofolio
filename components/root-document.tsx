@@ -28,7 +28,7 @@ const cormorant = localFont({
   adjustFontFallback: "Times New Roman",
 });
 
-const OG_LOCALE: Record<Lang, string> = { id: "id_ID", en: "en_US" };
+export const OG_LOCALE: Record<Lang, string> = { id: "id_ID", en: "en_US" };
 
 export function metadataFor(lang: Lang): Metadata {
   const title = SITE_NAME;

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { flushSync } from "react-dom";
 import { GlassSegmented } from "@zakisheriff/liquid-glass";
 import { Arrow } from "@/components/arrow";
+import { CASE_UI, caseStudyPath } from "@/lib/case-studies";
 import { CONTENT } from "@/lib/content";
 import type { Lang } from "@/lib/i18n";
 import { PROJECTS, type Project, type ProjectCategory } from "@/lib/projects";
@@ -14,15 +15,17 @@ const FILTERS: Filter[] = ["all", "web", "app", "data"];
 const matches = (filter: Filter, project: Project) =>
   filter === "all" || project.category === filter;
 
+/** External links open in a new tab with ↗; a link to a page of this site (a case study) stays in the tab with →. */
 function ProjectLink({ label, href, secondary }: { label: string; href: string; secondary: boolean }) {
+  const external = /^https?:/.test(href);
   return (
     <a
       className={secondary ? "project-link secondary-link" : "project-link"}
       href={href}
-      target="_blank"
-      rel="noopener noreferrer"
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener noreferrer" : undefined}
     >
-      {label} <Arrow glyph="↗" />
+      {label} <Arrow glyph={external ? "↗" : "→"} />
     </a>
   );
 }
@@ -94,6 +97,12 @@ export function ProjectBrowser({ lang }: { lang: Lang }) {
       <ol className="timeline">
         {PROJECTS.map((project) => {
           const place = visible.indexOf(project);
+          const links = [
+            ...(project.caseStudy
+              ? [{ label: CASE_UI[lang].read, href: caseStudyPath(project.id, lang) }]
+              : []),
+            ...project.links.map((link) => ({ label: link.label[lang], href: link.href })),
+          ];
           return (
             <li
               key={project.id}
@@ -127,23 +136,19 @@ export function ProjectBrowser({ lang }: { lang: Lang }) {
                       <span key={tag}>{tag}</span>
                     ))}
                   </div>
-                  {project.links.length > 1 ? (
+                  {links.length > 1 ? (
                     <div className="project-links">
-                      {project.links.map((link, position) => (
+                      {links.map((link, position) => (
                         <ProjectLink
                           key={link.href}
-                          label={link.label[lang]}
+                          label={link.label}
                           href={link.href}
                           secondary={position > 0}
                         />
                       ))}
                     </div>
                   ) : (
-                    <ProjectLink
-                      label={project.links[0].label[lang]}
-                      href={project.links[0].href}
-                      secondary={false}
-                    />
+                    <ProjectLink label={links[0].label} href={links[0].href} secondary={false} />
                   )}
                 </div>
               </article>

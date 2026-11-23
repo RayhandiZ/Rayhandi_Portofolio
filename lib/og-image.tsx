@@ -1,9 +1,10 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
+import { CASE_UI, caseStudyPath, type CaseStudy } from "@/lib/case-studies";
 import { CONTENT } from "@/lib/content";
 import { HOME_PATH, type Lang } from "@/lib/i18n";
-import { SITE_URL } from "@/lib/site";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
 /* The PNG comes out at about 380 KB. Keep it under 600 KB, the size WhatsApp allows for a link preview image
    (older guides say 300 KB); a second photo or a busier background would push it there. */
@@ -28,11 +29,195 @@ const MUTED = "#9fb4ca";
 const SEA = "#3b97df";
 const SEA_LIGHT = "#8ccfff";
 const SEA_FOAM = "#d4eeff";
+// The naive-guess bar of the case study chart (.bars .is-baseline in app/globals.css).
+const BASELINE = "#6f859c";
+
+const FONTS = [
+  { name: "Plus Jakarta Sans", data: jakartaSemiBold, weight: 600, style: "normal" },
+  { name: "Plus Jakarta Sans", data: jakartaExtraBold, weight: 800, style: "normal" },
+  { name: "Cormorant Garamond", data: cormorantItalic, weight: 500, style: "italic" },
+] as const;
+
+const addressOf = (path: string) => {
+  const url = new URL(path, SITE_URL);
+  return url.host + (url.pathname === "/" ? "" : url.pathname);
+};
+
+/** The page's mark (components/icons.tsx) and the page's address, at the foot of both cards. */
+function Signature({ address, fontSize = 24 }: { address: string; fontSize?: number }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 14,
+        fontSize,
+        fontWeight: 600,
+        color: MUTED,
+        whiteSpace: "nowrap",
+      }}
+    >
+      <svg width="28" height="28" viewBox="0 0 48 48">
+        <path
+          d="M24 3v42M3 24h42M9.2 9.2l29.6 29.6M38.8 9.2 9.2 38.8"
+          fill="none"
+          stroke={SEA_LIGHT}
+          strokeWidth={3}
+          strokeLinecap="round"
+        />
+      </svg>
+      {address}
+    </div>
+  );
+}
+
+/** The share card of a case study: its name and one line on the left, and on the right its bar chart or, for a
+    study without one, a phone screen. `phone` is a data URI; the route reads the file with a literal path so the
+    bundler ships it. */
+export function caseOgImage(study: CaseStudy, lang: Lang, phone?: string) {
+  const chart = study.sections.find((section) => section.kind === "bars");
+  const format = new Intl.NumberFormat(lang === "id" ? "id-ID" : "en-US", {
+    style: "percent",
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  });
+
+  return new ImageResponse(
+    (
+      <div
+        style={{
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          alignItems: "stretch",
+          justifyContent: "space-between",
+          gap: 48,
+          padding: "64px 72px 56px 84px",
+          backgroundColor: BG,
+          backgroundImage:
+            "radial-gradient(62% 72% at 80% 26%, rgba(59, 151, 223, 0.2), rgba(59, 151, 223, 0) 72%)",
+          fontFamily: "Plus Jakarta Sans",
+        }}
+      >
+        <div
+          style={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            <div style={{ fontSize: 26, fontWeight: 600, color: SEA_LIGHT }}>
+              {`${CASE_UI[lang].kind} · ${SITE_NAME}`}
+            </div>
+            <div
+              style={{
+                marginTop: 22,
+                fontSize: 68,
+                fontWeight: 800,
+                letterSpacing: "-0.045em",
+                lineHeight: 1.02,
+                color: WHITE,
+              }}
+            >
+              {study.og.name[lang]}
+            </div>
+            <div
+              style={{
+                marginTop: 26,
+                fontSize: 29,
+                fontWeight: 600,
+                lineHeight: 1.36,
+                color: "#c9d8e6",
+              }}
+            >
+              {study.og.line[lang]}
+            </div>
+          </div>
+          {/* Case study addresses are longer than the home page's, so they run a size smaller to stay on one line. */}
+          <Signature address={addressOf(caseStudyPath(study.slug, lang))} fontSize={21} />
+        </div>
+        {chart && (
+          <div
+            style={{
+              width: 360,
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              gap: 20,
+            }}
+          >
+            <div style={{ fontSize: 20, fontWeight: 600, color: MUTED }}>
+              {chart.valueLabel[lang]}
+            </div>
+            {chart.rows.map((row) => (
+              <div key={row.name.en} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    fontSize: 19,
+                    fontWeight: 600,
+                    color: row.baseline ? MUTED : WHITE,
+                  }}
+                >
+                  <span>{row.name[lang]}</span>
+                  <span>{format.format(row.value)}</span>
+                </div>
+                <div
+                  style={{
+                    display: "flex",
+                    height: 12,
+                    borderRadius: 6,
+                    backgroundColor: "rgba(140, 207, 255, 0.12)",
+                  }}
+                >
+                  <div
+                    style={{
+                      width: `${row.value * 100}%`,
+                      borderRadius: 6,
+                      backgroundColor: row.baseline ? BASELINE : SEA_LIGHT,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {!chart && phone && (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 300,
+              marginRight: 24,
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={phone}
+              alt=""
+              width={240}
+              height={522}
+              style={{
+                borderRadius: 30,
+                border: "2px solid rgba(140, 207, 255, 0.35)",
+                boxShadow: "0 20px 60px rgba(0, 6, 14, 0.55)",
+              }}
+            />
+          </div>
+        )}
+      </div>
+    ),
+    { ...OG_IMAGE_SIZE, fonts: [...FONTS] },
+  );
+}
 
 /** The share card for one language: the hero's greeting and name beside the portrait in its arched frame. */
 export function ogImage(lang: Lang) {
-  const url = new URL(HOME_PATH[lang], SITE_URL);
-  const address = url.host + (url.pathname === "/" ? "" : url.pathname);
+  const address = addressOf(HOME_PATH[lang]);
 
   return new ImageResponse(
     (
@@ -95,28 +280,7 @@ export function ogImage(lang: Lang) {
               Zulmi.
             </div>
           </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 14,
-              fontSize: 24,
-              fontWeight: 600,
-              color: MUTED,
-            }}
-          >
-            {/* The page's mark (components/icons.tsx). */}
-            <svg width="28" height="28" viewBox="0 0 48 48">
-              <path
-                d="M24 3v42M3 24h42M9.2 9.2l29.6 29.6M38.8 9.2 9.2 38.8"
-                fill="none"
-                stroke={SEA_LIGHT}
-                strokeWidth={3}
-                strokeLinecap="round"
-              />
-            </svg>
-            {address}
-          </div>
+          <Signature address={address} />
         </div>
         <div
           style={{
@@ -166,13 +330,6 @@ export function ogImage(lang: Lang) {
         </div>
       </div>
     ),
-    {
-      ...OG_IMAGE_SIZE,
-      fonts: [
-        { name: "Plus Jakarta Sans", data: jakartaSemiBold, weight: 600, style: "normal" },
-        { name: "Plus Jakarta Sans", data: jakartaExtraBold, weight: 800, style: "normal" },
-        { name: "Cormorant Garamond", data: cormorantItalic, weight: 500, style: "italic" },
-      ],
-    },
+    { ...OG_IMAGE_SIZE, fonts: [...FONTS] },
   );
 }

@@ -9,11 +9,20 @@ const CODES = LANGS.map((code) => code.toUpperCase());
 const NAMES: Record<Lang, string> = { id: "Bahasa Indonesia", en: "English" };
 
 /** ID | EN. Each language is its own page, so switching loads the other one at the same section.
-    Plain links stand in for the segmented control when script is unavailable. */
-export function LanguageSwitch({ lang, section }: { lang: Lang; section: string }) {
+    Plain links stand in for the segmented control when script is unavailable. `paths` names the page in each
+    language; it is the home page unless a case study passes its own. */
+export function LanguageSwitch({
+  lang,
+  section = "",
+  paths = HOME_PATH,
+}: {
+  lang: Lang;
+  section?: string;
+  paths?: Record<Lang, string>;
+}) {
   const [selected, setSelected] = useState(() => LANGS.indexOf(lang));
   const hrefFor = (target: Lang) =>
-    HOME_PATH[target] + (section && section !== "beranda" ? `#${section}` : "");
+    paths[target] + (section && section !== "beranda" ? `#${section}` : "");
 
   // Coming back with the browser's Back button can restore this page as it was left, mid-switch.
   useEffect(() => {
@@ -47,7 +56,7 @@ export function LanguageSwitch({ lang, section }: { lang: Lang; section: string 
           <a
             key={code}
             className="lang-link"
-            href={HOME_PATH[code]}
+            href={paths[code]}
             hrefLang={code}
             lang={code}
             aria-label={NAMES[code]}

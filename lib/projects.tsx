@@ -25,12 +25,16 @@ export interface Project {
   tags: string[];
   /** The first link is the main one; any further links are shown as secondary. */
   links: Array<{ label: Localized; href: string }>;
+  /** Set when lib/case-studies.ts has a case study under this project's id. Its link then comes first and the
+      links above become secondary. */
+  caseStudy?: true;
 }
 
 const SOURCE_CODE: Localized = { id: "Lihat source code", en: "View source code" };
 
 // Mean of the 15 cross-validation folds in data/fnn_fold_results.csv and data/lstm_fold_results.csv
-// of the mockup_ews repository.
+// of the mockup_ews repository. The LSTM there is the BiLSTM-64 configuration (lstm_config_summary.csv),
+// without attention; BiLSTM + Attention was only run in the separate 25-fold comparison.
 const EWS_METRICS = [
   { label: "Acc", fnn: 0.689, lstm: 0.661 },
   { label: "F1", fnn: 0.659, lstm: 0.607 },
@@ -102,7 +106,7 @@ export const PROJECTS: Project[] = [
       <>
         <Mark className="art-mark" spin={-0.12} />
         <div className="art-top">
-          <span>Made for freelancers</span>
+          <span>Customers × freelancers</span>
           <span>App</span>
         </div>
         <div className="digitask-lockup">
@@ -117,7 +121,7 @@ export const PROJECTS: Project[] = [
           </div>
         </div>
         <div className="art-bottom">
-          <span>Task & project management</span>
+          <span>Freelance marketplace</span>
           <span>Mobile</span>
         </div>
       </>
@@ -126,13 +130,14 @@ export const PROJECTS: Project[] = [
     name: { id: "DigiTask", en: "DigiTask" },
     title: { id: "Aplikasi DigiTask", en: "DigiTask App" },
     description: {
-      id: "Aplikasi untuk membantu freelancer mengelola tugas dan proyek secara efisien.",
-      en: "An app that helps freelancers manage their tasks and projects efficiently.",
+      id: "Marketplace freelance di ponsel yang mempertemukan customer dengan freelancer. Saya mendesainnya di Figma dan membangun 37 layar dengan Flutter, dengan verifikasi biometrik untuk pembayaran dan chatbot Gemini.",
+      en: "A mobile freelance marketplace that connects customers with freelancers. I designed it in Figma and built 37 screens in Flutter, with biometric checks on payments and a Gemini chatbot.",
     },
     tags: ["Dart", "Flutter"],
     links: [
       { label: SOURCE_CODE, href: "https://github.com/RayhandiZ/DigiTask" },
     ],
+    caseStudy: true,
   },
   {
     id: "himsi",
@@ -199,8 +204,8 @@ export const PROJECTS: Project[] = [
             role="img"
             aria-label={
               lang === "id"
-                ? "Rata-rata skor validasi silang 15 fold. FNN unggul di kelima metrik, misalnya akurasi 0,69 berbanding 0,66 untuk BiLSTM + Attention."
-                : "Mean scores over 15 cross-validation folds. FNN leads on all five metrics, for example accuracy 0.69 against 0.66 for BiLSTM + Attention."
+                ? "Rata-rata skor validasi silang 15 fold. FNN unggul tipis di kelima metrik, misalnya akurasi 0,69 berbanding 0,66 untuk BiLSTM."
+                : "Mean scores over 15 cross-validation folds. FNN leads narrowly on all five metrics, for example accuracy 0.69 against 0.66 for the BiLSTM."
             }
           >
             <div className="ews-plot">
@@ -228,7 +233,7 @@ export const PROJECTS: Project[] = [
             <span className="ews-swatch" aria-hidden="true" />
             FNN
             <span className="ews-swatch ews-swatch-alt" aria-hidden="true" />
-            BiLSTM + Attention
+            BiLSTM
           </span>
           <span>15-fold CV</span>
         </div>
@@ -241,12 +246,13 @@ export const PROJECTS: Project[] = [
       en: "GPA Early Warning System",
     },
     description: {
-      id: "Purwarupa early warning system yang mendeteksi dini mahasiswa berisiko akademik dari 40 faktor di luar kampus, dengan komparasi model FNN dan BiLSTM + Attention serta dashboard tata kelola risiko AI.",
-      en: "A prototype early warning system that flags students at academic risk from 40 factors outside campus, comparing FNN and BiLSTM + Attention models, with a dashboard for AI risk governance.",
+      id: "Purwarupa early warning system yang memprediksi kategori IPK dari 40 faktor di luar kampus. Semua model berhenti di bawah 70%, jadi prediksi yang meragukan diarahkan ke dosen lewat dashboard tata kelola risiko.",
+      en: "A prototype early warning system that predicts a student's GPA band from 40 factors outside campus. Every model stalled below 70%, so a risk-governance dashboard routes uncertain predictions to a lecturer.",
     },
     tags: ["Python", "Streamlit", "Pandas", "Plotly"],
     links: [
       { label: SOURCE_CODE, href: "https://github.com/RayhandiZ/mockup_ews" },
     ],
+    caseStudy: true,
   },
 ];

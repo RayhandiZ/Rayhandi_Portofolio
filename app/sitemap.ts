@@ -1,18 +1,26 @@
 import type { MetadataRoute } from "next";
-import { HOME_PATH, LANGS } from "@/lib/i18n";
+import { CASE_STUDIES, caseStudyPath } from "@/lib/case-studies";
+import { HOME_PATH, LANGS, type Lang } from "@/lib/i18n";
 import { SITE_URL } from "@/lib/site";
 
 const absolute = (path: string) => new URL(path, SITE_URL).href;
 
-/** One entry per language. Each lists both versions, so search engines treat them as translations of one page. */
-export default function sitemap(): MetadataRoute.Sitemap {
+/** One entry per page and language. Each lists both versions, so search engines treat them as translations
+    of one page. */
+function entries(pathFor: (lang: Lang) => string): MetadataRoute.Sitemap {
   const languages = {
-    id: absolute(HOME_PATH.id),
-    en: absolute(HOME_PATH.en),
-    "x-default": absolute(HOME_PATH.id),
+    id: absolute(pathFor("id")),
+    en: absolute(pathFor("en")),
+    "x-default": absolute(pathFor("id")),
   };
-  return LANGS.map((lang) => ({
-    url: absolute(HOME_PATH[lang]),
-    alternates: { languages },
-  }));
+  return LANGS.map((lang) => ({ url: absolute(pathFor(lang)), alternates: { languages } }));
+}
+
+export default function sitemap(): MetadataRoute.Sitemap {
+  return [
+    ...entries((lang) => HOME_PATH[lang]),
+    ...Object.values(CASE_STUDIES).flatMap((study) =>
+      entries((lang) => caseStudyPath(study.slug, lang)),
+    ),
+  ];
 }

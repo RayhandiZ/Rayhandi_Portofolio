@@ -3140,3 +3140,575 @@ body:has(.lg-track[data-lifted]) .cursor-ring.is-on {
     visibility: visible !important;
   }
 }
+
+/* Case study pages (components/case-study.tsx, one per project in lib/case-studies.ts). They share the header
+   capsule with the home page and use no .reveal: nothing on them waits for lib/motion.ts to show it. */
+
+/* → and ← slide sideways. These come after the diagonal rules above so they win the tie. */
+.arrow-h i + i {
+  translate: var(--from) 0;
+}
+:is(a, button):hover .arrow-h i:first-child {
+  translate: calc(var(--from) * -1) 0;
+}
+
+.case-nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.case-back {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding-inline: 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  transition:
+    color 0.3s,
+    background-color 0.3s;
+}
+.case-back:hover {
+  color: var(--white);
+  background: var(--glass-select);
+}
+
+.case {
+  padding-bottom: 140px;
+}
+.case-hero {
+  padding-top: 184px;
+  padding-bottom: 88px;
+  border-bottom: 1px solid var(--line);
+}
+.case-title {
+  max-width: 19ch;
+  margin-top: 22px;
+  font-size: clamp(38px, 5vw, 74px);
+  line-height: 1.06;
+  letter-spacing: -0.045em;
+  font-weight: 700;
+  color: var(--white);
+  text-wrap: balance;
+}
+.case-title em {
+  font-size: 1.16em;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.case-lede {
+  max-width: 720px;
+  margin-top: 32px;
+  font-size: clamp(17px, 1.4vw, 19px);
+  line-height: 1.7;
+  color: var(--muted);
+}
+.case-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 24px 32px;
+  margin-top: 56px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.case-facts dt {
+  font-size: 13px;
+  color: var(--muted);
+}
+.case-facts dd {
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text);
+}
+.case-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 48px;
+}
+.case-stats li {
+  padding: 24px 26px 26px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: linear-gradient(160deg, rgba(17, 48, 77, 0.55), rgba(11, 35, 57, 0.2));
+}
+.case-stats strong {
+  display: block;
+  font-size: clamp(32px, 3.4vw, 46px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  color: var(--white);
+  font-variant-numeric: tabular-nums;
+}
+.case-stats span {
+  display: block;
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.case-links {
+  max-width: 380px;
+  margin-top: 36px;
+}
+
+.case-body {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 80px;
+  padding-top: 104px;
+}
+.case-toc {
+  position: sticky;
+  top: 120px;
+  align-self: start;
+}
+.case-toc ol {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-left: 1px solid var(--line);
+}
+.case-toc a {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  min-height: 40px;
+  padding: 8px 0 8px 18px;
+  margin-left: -1px;
+  border-left: 1px solid transparent;
+  font-size: 14px;
+  color: var(--muted);
+  transition:
+    color 0.3s,
+    border-color 0.3s;
+}
+.case-toc a:hover {
+  color: var(--white);
+  border-left-color: var(--sea-light);
+}
+.case-toc a span {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--sea-light);
+}
+.case-sections {
+  display: grid;
+  gap: 112px;
+  max-width: 760px;
+}
+.case-section {
+  scroll-margin-top: 24px;
+}
+.case-label {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--sea-light);
+}
+.case-label span {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+}
+.case-section h2 {
+  margin-top: 14px;
+  font-size: clamp(28px, 3vw, 42px);
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  word-spacing: normal;
+  text-wrap: balance;
+}
+.case-section h2 + * {
+  margin-top: 28px;
+}
+.case-prose {
+  display: grid;
+  gap: 18px;
+}
+.case-prose p,
+.case-intro {
+  font-size: 17px;
+  line-height: 1.75;
+  color: #c3d3e2;
+}
+.case-section h3 {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.015em;
+  color: var(--white);
+  text-wrap: balance;
+}
+
+.case-steps {
+  display: grid;
+  gap: 40px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.case-steps li {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 8px 20px;
+  padding-top: 28px;
+  border-top: 1px solid var(--line);
+}
+.step-num {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--sea-light);
+}
+
+/* Ranked bars from zero. Thin marks, a 4px rounded data end, square at the baseline; the hairline through
+   every track is the naive guess (--base), and the grey row is that guess itself. */
+.case-chart {
+  padding: 28px 28px 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--bg-alt);
+}
+.case-chart + .case-prose {
+  margin-top: 32px;
+}
+.bars {
+  width: 100%;
+  border-collapse: collapse;
+}
+.bars caption {
+  caption-side: top;
+  padding-bottom: 18px;
+  text-align: left;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+.bars th {
+  width: 38%;
+  padding: 9px 16px 9px 0;
+  text-align: left;
+  vertical-align: middle;
+}
+.bars td {
+  padding: 9px 0;
+  vertical-align: middle;
+}
+.bar-name {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--white);
+}
+.bar-note {
+  display: block;
+  margin-top: 2px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.bar-line {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.bar-track {
+  position: relative;
+  flex: 1;
+  height: 10px;
+  border-radius: 0 5px 5px 0;
+  background: rgba(140, 207, 255, 0.08);
+}
+.bar-track::after {
+  content: "";
+  position: absolute;
+  top: -9px;
+  bottom: -9px;
+  left: calc(var(--base, 0) * 100%);
+  width: 1px;
+  background: rgba(212, 238, 255, 0.4);
+}
+.bar {
+  display: block;
+  width: calc(var(--v) * 100%);
+  height: 100%;
+  border-radius: 0 4px 4px 0;
+  background: var(--sea-light);
+}
+.bar-value {
+  min-width: 56px;
+  text-align: right;
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--white);
+}
+.is-baseline .bar {
+  background: #6f859c;
+}
+.is-baseline .bar-name,
+.is-baseline .bar-value {
+  color: var(--muted);
+}
+.bars tfoot td {
+  padding: 6px 0 0;
+}
+.bars-axis {
+  position: relative;
+  display: block;
+  height: 18px;
+  margin-right: 70px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.bars-axis span {
+  position: absolute;
+  top: 0;
+}
+.bars-axis span:nth-child(2) {
+  left: 50%;
+  translate: -50% 0;
+}
+.bars-axis span:last-child {
+  right: 0;
+}
+
+.case-figures {
+  display: grid;
+  gap: 40px;
+}
+.case-figure img {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+}
+.case-figure figcaption {
+  margin-top: 14px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+.case-intro + .case-figures,
+.case-intro + .case-list {
+  margin-top: 28px;
+}
+
+.case-ledger {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.ledger-col {
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--bg-alt);
+}
+.ledger-col ul {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+.ledger-col li {
+  position: relative;
+  padding-left: 28px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #c3d3e2;
+}
+.ledger-col li::before {
+  content: "○" / "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  color: var(--muted);
+}
+.ledger-col.is-done li::before {
+  content: "✓" / "";
+  color: var(--sea-light);
+}
+
+.case-list {
+  display: grid;
+  gap: 14px;
+}
+.case-list li {
+  position: relative;
+  padding-left: 26px;
+  font-size: 16px;
+  line-height: 1.65;
+  color: #c3d3e2;
+}
+.case-list li::before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 0.68em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--sea-light);
+}
+
+.case-end {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.case-end-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 1000px) {
+  .case-body {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    padding-top: 72px;
+  }
+  .case-toc {
+    display: none;
+  }
+  .case-sections {
+    max-width: none;
+  }
+}
+@media (max-width: 900px) {
+  /* No menu button beside the switch here, so it needs none of the home page's offset. */
+  .nav-enhanced .case-header .lang-switch {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+@media (max-width: 760px) {
+  .case-hero {
+    padding-top: 132px;
+    padding-bottom: 56px;
+  }
+  .case-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .case-stats,
+  .case-ledger,
+  .case-end {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .case-sections {
+    gap: 80px;
+  }
+  .case-steps li {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .step-num {
+    font-size: 32px;
+  }
+  .case-chart {
+    padding: 20px 16px 14px;
+  }
+  .bars th {
+    width: 42%;
+    padding-right: 12px;
+  }
+  .bar-name {
+    font-size: 14px;
+  }
+  .bar-line {
+    gap: 10px;
+  }
+  .bar-value {
+    min-width: 48px;
+    font-size: 14px;
+  }
+  .bars-axis {
+    margin-right: 58px;
+  }
+  .ledger-col {
+    padding: 22px 20px;
+  }
+}
+@media (max-width: 520px) {
+  .case-back {
+    padding-inline: 14px;
+  }
+  .case-back-text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .case-facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Case study: two numbered flows side by side, and a list under figures. */
+.case-intro + .case-flows {
+  margin-top: 28px;
+}
+.case-flows {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.flow-col {
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--bg-alt);
+}
+.flow-col ol {
+  display: grid;
+  gap: 14px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: flow;
+}
+.flow-col li {
+  position: relative;
+  padding-left: 40px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #c3d3e2;
+  counter-increment: flow;
+}
+.flow-col li::before {
+  content: counter(flow, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--sea-light);
+}
+.case-figures + .case-points {
+  margin-top: 36px;
+}
+@media (max-width: 760px) {
+  .case-flows {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .flow-col {
+    padding: 22px 20px;
+  }
+}
