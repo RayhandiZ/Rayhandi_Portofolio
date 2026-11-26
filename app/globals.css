@@ -2479,6 +2479,340 @@ body:has(.lg-track[data-lifted]) .cursor-ring.is-on {
     translate: 0 0;
   }
 }
+
+/* Intro (components/intro.tsx): the rz monogram rises out of the sea. It shows only while <html> has
+   .has-intro, which the boot script in components/root-document.tsx sets on the first visit to a home page in
+   a tab with motion allowed. The horizon draws at once; the rest waits for .intro-go (the serif has loaded).
+   lib/intro.ts adds .intro-leave when the logo is complete: the horizon runs to the edges and the screen
+   parts along it. Its ARRIVAL, REVEAL_AT and EXIT follow the timings here. */
+.intro {
+  display: none;
+}
+.has-intro:not(.intro-leave) {
+  overflow: hidden;
+  /* Keeps the scrollbar's place, so nothing shifts when it comes back. */
+  scrollbar-gutter: stable;
+}
+.has-intro .intro {
+  /* Space between the letters' baseline and the horizon. */
+  --gap: 0.05em;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: block;
+  background: var(--bg);
+  touch-action: none;
+  user-select: none;
+}
+.intro-half {
+  position: absolute;
+  inset-inline: 0;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--bg);
+  transition: translate 1s cubic-bezier(0.76, 0, 0.24, 1) 0.4s;
+}
+/* Both halves are cut at the same 50%, so they meet without a seam. Each clips its letters at the horizon. */
+.intro-top {
+  top: 0;
+  bottom: 50%;
+  align-items: flex-end;
+}
+.intro-bottom {
+  top: 50%;
+  bottom: 0;
+  align-items: flex-start;
+}
+/* Light on the water either side of the horizon. */
+.intro-half::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+}
+.intro-top::before {
+  background: radial-gradient(56% 72% at 50% 100%, rgba(59, 151, 223, 0.17), transparent 72%);
+}
+.intro-bottom::before {
+  background: radial-gradient(56% 46% at 50% 0%, rgba(59, 151, 223, 0.12), transparent 72%);
+}
+/* The edges that carry the horizon away as the halves part. */
+.intro-half::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(140, 207, 255, 0.7) 20%,
+    var(--sea-foam) 50%,
+    rgba(140, 207, 255, 0.7) 80%,
+    transparent
+  );
+  opacity: 0;
+}
+.intro-top::after {
+  bottom: 0;
+}
+.intro-bottom::after {
+  top: 0;
+}
+.intro-type {
+  position: relative;
+  display: flex;
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 500;
+  font-size: min(clamp(124px, 21vw, 236px), 34vh);
+  line-height: 1;
+  padding-right: 0.14em;
+}
+/* At line-height 1 the serif's baseline sits 0.18em above the bottom of the line. */
+.intro-logo {
+  margin-bottom: calc(var(--gap) - 0.18em);
+}
+.intro-letter {
+  display: inline-block;
+  /* The padding widens the box the gradient paints in, so the italic overhang keeps its colour; the margins
+     take it back and set the letters as close as the About monogram's -0.12em. */
+  padding: 0 0.2em 0 0.1em;
+  margin: 0 -0.32em 0 -0.1em;
+  background: linear-gradient(
+    180deg,
+    var(--sea-foam) 42%,
+    var(--sea-light) 62%,
+    var(--sea) 86%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  translate: 0 106%;
+}
+/* As in the About monogram, the r rides a little higher than the z. */
+.intro-letter:first-child {
+  position: relative;
+  top: -0.1em;
+}
+.intro-mark {
+  position: absolute;
+  top: 0.035em;
+  right: -0.1em;
+  width: 0.25em;
+  height: 0.25em;
+  color: var(--sea-light);
+}
+.intro-mark svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  scale: 0;
+}
+.intro-mark line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  /* A gap twice the arm's length, so an undrawn arm leaves no round-cap dot. */
+  stroke-dasharray: 1 2;
+  stroke-dashoffset: 1;
+}
+/* The mirror image under the horizon, broken into lines like light on water. */
+.intro-reflection {
+  margin-top: calc(var(--gap) - 0.18em);
+  scale: 1 -1;
+  opacity: 0.26;
+  -webkit-mask:
+    linear-gradient(to top, #000 14%, transparent 64%),
+    repeating-linear-gradient(to top, #000 0 0.03em, transparent 0.03em 0.055em);
+  -webkit-mask-composite: source-in;
+  mask:
+    linear-gradient(to top, #000 14%, transparent 64%) intersect,
+    repeating-linear-gradient(to top, #000 0 0.03em, transparent 0.03em 0.055em);
+}
+/* Ripples spreading from where the letters break the surface; the bottom half shows their near side. */
+.intro-ring {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(560px, 74vw);
+  aspect-ratio: 5 / 1;
+  translate: -50% -50%;
+  border: 1px solid rgba(140, 207, 255, 0.5);
+  border-radius: 50%;
+  opacity: 0;
+}
+.intro-meta {
+  position: absolute;
+  inset: auto clamp(16px, 4vw, 48px) clamp(20px, 4.5vh, 40px);
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.intro-meta > span {
+  overflow: hidden;
+}
+.intro-meta > span > span {
+  display: block;
+  translate: 0 110%;
+}
+.intro-horizon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(620px, 76vw);
+  height: 1px;
+  translate: -50% -50%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(140, 207, 255, 0.75) 18%,
+    var(--sea-foam) 50%,
+    rgba(140, 207, 255, 0.75) 82%,
+    transparent
+  );
+  box-shadow: 0 0 16px rgba(140, 207, 255, 0.4);
+  scale: 0 1;
+  animation: intro-horizon 0.95s 0.1s var(--ease-out) forwards;
+}
+
+/* Arrival, from .intro-go. */
+.intro-go .intro-half::before {
+  animation: intro-fade 1.4s 0.3s ease-out forwards;
+}
+.intro-go .intro-letter {
+  /* A slight overshoot: the letters bob up out of the water. */
+  animation: intro-rise 1.1s 0.38s cubic-bezier(0.3, 1.25, 0.5, 1) both;
+}
+.intro-go .intro-letter + .intro-letter {
+  animation-delay: 0.48s;
+}
+.intro-go .intro-mark svg {
+  animation: intro-spark 1.2s 0.2s var(--ease-out) both;
+}
+.intro-go .intro-mark line {
+  animation: intro-draw 0.55s var(--ease-out) both;
+  animation-delay: calc(0.24s + var(--i) * 45ms);
+}
+/* Once drawn, the mark keeps turning slowly, as the page's marks do on scroll. */
+.intro-go .intro-mark {
+  animation: intro-spin 18s 1.4s linear infinite;
+}
+.intro-go .intro-reflection {
+  animation: intro-ripple 2.6s 1.2s ease-in-out infinite alternate;
+}
+.intro-go .intro-ring {
+  animation: intro-ring 1.7s 0.42s var(--ease-out) forwards;
+}
+.intro-go .intro-ring + .intro-ring {
+  animation-delay: 0.66s;
+}
+.intro-go .intro-meta > span > span {
+  animation: intro-rise 0.8s 0.75s var(--ease-out) both;
+}
+.intro-go .intro-meta > span + span > span {
+  animation-delay: 0.85s;
+}
+
+/* Exit, from .intro-leave: the horizon runs to both edges, then the halves part along it. */
+.intro-leave .intro {
+  background: transparent;
+  pointer-events: none;
+}
+.intro-leave .intro-horizon {
+  width: 100vw;
+  opacity: 0;
+  transition:
+    width 0.4s cubic-bezier(0.65, 0, 0.35, 1),
+    opacity 0s 0.4s;
+}
+.intro-leave .intro-half::after {
+  opacity: 1;
+  transition: opacity 0s 0.4s;
+}
+.intro-leave .intro-top {
+  translate: 0 -100%;
+}
+.intro-leave .intro-bottom {
+  translate: 0 100%;
+}
+/* The logo outruns its half, so the two read as separate layers. */
+.intro-leave .intro-logo {
+  translate: 0 -14vh;
+  opacity: 0;
+  transition:
+    translate 1s cubic-bezier(0.76, 0, 0.24, 1) 0.4s,
+    opacity 0.5s 0.6s;
+}
+.intro-leave .intro-reflection {
+  opacity: 0;
+  transition: opacity 0.35s;
+}
+@keyframes intro-horizon {
+  to {
+    scale: 1 1;
+  }
+}
+@keyframes intro-fade {
+  to {
+    opacity: 1;
+  }
+}
+@keyframes intro-rise {
+  to {
+    translate: 0 0;
+  }
+}
+@keyframes intro-spark {
+  from {
+    rotate: -140deg;
+    scale: 0.3;
+  }
+  65% {
+    scale: 1.15;
+  }
+  to {
+    rotate: 0deg;
+    scale: 1;
+  }
+}
+@keyframes intro-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes intro-spin {
+  to {
+    rotate: 360deg;
+  }
+}
+@keyframes intro-ripple {
+  to {
+    transform: skewX(-7deg) scaleX(1.04);
+  }
+}
+@keyframes intro-ring {
+  0% {
+    scale: 0.06;
+    opacity: 0;
+  }
+  14% {
+    opacity: 1;
+  }
+  100% {
+    scale: 1;
+    opacity: 0;
+  }
+}
+
 .motion .reveal {
   opacity: 0;
   translate: 0 22px;
@@ -3101,7 +3435,8 @@ body:has(.lg-track[data-lifted]) .cursor-ring.is-on {
   .cursor-ring,
   .tech-band,
   .footer-name,
-  .morph-sans {
+  .morph-sans,
+  .intro {
     display: none !important;
   }
   .morph-serif,

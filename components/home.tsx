@@ -3,6 +3,7 @@ import { Contact } from "@/components/contact";
 import { Experience } from "@/components/experience";
 import { GlassTouchScroll } from "@/components/glass-touch-scroll";
 import { Hero } from "@/components/hero";
+import { Intro } from "@/components/intro";
 import { Motion } from "@/components/motion";
 import { SiteHeader } from "@/components/site-header";
 import { Skills } from "@/components/skills";
@@ -16,6 +17,8 @@ import type { Lang } from "@/lib/i18n";
 export function Home({ lang }: { lang: Lang }) {
   return (
     <>
+      {/* First, so the browser can paint it before the rest of the page arrives. */}
+      <Intro lang={lang} />
       <a className="skip-link" href="#main">
         {CONTENT[lang].skipLink}
       </a>

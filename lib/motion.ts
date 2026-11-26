@@ -1,7 +1,4 @@
-/* Page motion: the hero opening, the scroll pipeline, and the pointer effects. No library.
-   React renders the markup; this module only animates it. Where it has to restructure text (the serif
-   wipe, the split name, the lit sentence) it keeps the nodes React created and puts them back on cleanup,
-   so the DOM is exactly as React left it after an unmount or a hot reload. */
+import { introRevealed } from "@/lib/intro";
 
 const clamp = (value: number, min = 0, max = 1) =>
   Math.min(max, Math.max(min, value));
@@ -389,7 +386,8 @@ function animate(
     document.fonts.ready,
     new Promise((resolve) => setTimeout(resolve, 1200)),
   ]);
-  void fontsReady.then(() => {
+  // Behind the intro the opening would play unseen, so it starts as the intro parts.
+  void Promise.all([fontsReady, introRevealed()]).then(() => {
     if (signal.aborted) return;
     fitAll();
     splitName();

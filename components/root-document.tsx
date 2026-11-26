@@ -61,9 +61,18 @@ export const VIEWPORT: Viewport = {
 };
 
 /* Runs before first paint. `nav-enhanced` switches the header to its scripted form and `motion` hides what
-   the opening animates in. If the app has not started after six seconds (script blocked or failed), both
-   are taken back so the page shows complete and still, as it does without JavaScript. */
-const bootScript = `(function(){var r=document.documentElement;r.classList.add("nav-enhanced");if(window.matchMedia("(prefers-reduced-motion: no-preference)").matches)r.classList.add("motion");setTimeout(function(){if(window.__appStarted)return;r.classList.remove("nav-enhanced","motion");window.__motionOff=true},6000)})()`;
+   the opening animates in. `has-intro` shows the intro (components/intro.tsx) on the first visit to a home
+   page in this tab; `intro-go` starts its arrival once the serif face has loaded, or after 0.9 s without
+   it. If the app has not started after six seconds (script blocked or failed), all of these are taken back
+   so the page shows complete and still, as it does without JavaScript. */
+const bootScript = `(function(){var r=document.documentElement,w=window;r.classList.add("nav-enhanced");var m=w.matchMedia("(prefers-reduced-motion: no-preference)").matches;if(m)r.classList.add("motion");if(m&&${JSON.stringify(Object.values(HOME_PATH))}.indexOf(location.pathname)>-1)try{if(!sessionStorage.getItem("rz-intro")){sessionStorage.setItem("rz-intro","1");w.__intro=true;r.classList.add("has-intro")}}catch(e){}if(w.__intro){var t=performance.now(),go=function(){if(w.__introAt===undefined){w.__introAt=performance.now();r.classList.add("intro-go")}},wait=function(){if(performance.now()-t>900)return go();document.fonts.load(${JSON.stringify(`italic 500 1em ${cormorant.style.fontFamily}`)}).then(function(f){f.length?go():setTimeout(wait,40)},go)};document.fonts?wait():go()}setTimeout(function(){if(w.__appStarted)return;r.classList.remove("nav-enhanced","motion","has-intro","intro-go","intro-leave");w.__motionOff=true;w.__intro=false},6000)})()`;
+
+/* Production only, as on omb.umn.ac.id: the right-click menu and the shortcuts for DevTools (F12,
+   Ctrl+Shift+I/J/C, Cmd+Opt+I/J/C) and view source (Ctrl+U, Cmd+U) do nothing. It only deters a casual look:
+   the browser's own menu, view-source: and any HTTP client still show everything, and the repository is
+   public. Form fields keep their menu for paste and spelling suggestions. Keys are matched by `code`
+   because Option changes `key` on a Mac. */
+const guardScript = `(function(){var d=["KeyI","KeyJ","KeyC"];addEventListener("contextmenu",function(e){var t=e.target;if(!(t instanceof Element&&t.closest("input,textarea,[contenteditable]")))e.preventDefault()});addEventListener("keydown",function(e){var c=e.code;if(e.key==="F12"||((e.ctrlKey&&e.shiftKey)||(e.metaKey&&e.altKey))&&d.indexOf(c)>-1||(e.ctrlKey||e.metaKey)&&c==="KeyU"){e.preventDefault();e.stopPropagation()}},true)})()`;
 
 /** The HTML document both languages share. Each language's root layout renders it with its own `lang`. */
 export function RootDocument({ lang, children }: { lang: Lang; children: ReactNode }) {
@@ -79,6 +88,9 @@ export function RootDocument({ lang, children }: { lang: Lang; children: ReactNo
       {/* eslint-disable-next-line @next/next/no-head-element */}
       <head>
         <script dangerouslySetInnerHTML={{ __html: bootScript }} />
+        {process.env.NODE_ENV === "production" && (
+          <script dangerouslySetInnerHTML={{ __html: guardScript }} />
+        )}
       </head>
       <body>
         <SvgSprite />

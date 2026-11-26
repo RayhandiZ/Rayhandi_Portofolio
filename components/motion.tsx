@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect } from "react";
+import { playIntro, restoreIntro } from "@/lib/intro";
 import { startMotion } from "@/lib/motion";
 import { startSmoothScroll } from "@/lib/smooth-scroll";
 
@@ -13,7 +14,7 @@ declare global {
   }
 }
 
-/** Runs the page motion and smooth scrolling when the visitor allows motion. Renders nothing. */
+/** Runs the intro's exit, the page motion, and smooth scrolling when the visitor allows motion. Renders nothing. */
 export function Motion() {
   useLayoutEffect(() => {
     // The boot script set these classes before first paint. React's development remount resets <html> to
@@ -26,15 +27,19 @@ export function Motion() {
       window.matchMedia("(prefers-reduced-motion: no-preference)").matches
     )
       root.classList.add("motion");
+    restoreIntro();
   }, []);
 
   useEffect(() => {
     if (!document.documentElement.classList.contains("motion")) return;
+    // First, so the hero's opening in startMotion knows whether to wait for the intro.
+    const stopIntro = playIntro();
     const stopScroll = startSmoothScroll();
     const stopMotion = startMotion();
     return () => {
       stopMotion();
       stopScroll();
+      stopIntro();
     };
   }, []);
 
